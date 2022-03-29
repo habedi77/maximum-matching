@@ -51,3 +51,38 @@ class BaseBipartiteGraph(ABC):
         :return: True if vertices i and j are connected, False otherwise
         """
         pass
+
+
+class FullMatrixBipartiteGraph(BaseBipartiteGraph):
+    """
+    Graph class for storing adjacency matrix in a full 2D matrix.
+    """
+
+    def __init__(self, matrix: np.ndarray) -> None:
+        super().__init__()
+        assert len(matrix.shape) == 2
+        assert matrix.shape[0] == matrix.shape[1]
+        assert matrix.dtype == bool
+
+        self.size = matrix.shape[0]
+        self.matrix = matrix
+
+    def list(self, i: int) -> np.ndarray:
+        """
+        get list of vertices connected to vertex i
+
+        :param i: vertex index
+        :return: np.ndarray of vertices connected to i
+        """
+
+        return np.where(self.matrix[i, :])
+
+    def connected(self, i: int, j: int) -> bool:
+        """
+        Check whether vertices i and j are connected or not
+
+        :param i: vertex index
+        :param j: vertex index
+        :return: True if vertices i and j are connected, False otherwise
+        """
+        return self.matrix[i, j]
