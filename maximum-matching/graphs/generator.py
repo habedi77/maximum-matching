@@ -1,5 +1,13 @@
+from enum import Enum
+
 import numpy as np
 from abc import ABC, abstractmethod
+
+
+class StorageType(Enum):
+    FullMatrix = "full_matrix",
+    BipartiteMatrix = "bipartite_matrix",
+    SparseList = "sparse_list"
 
 
 class BaseBipartiteGenerator(ABC):
