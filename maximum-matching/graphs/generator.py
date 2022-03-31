@@ -2,12 +2,7 @@ from enum import Enum
 
 import numpy as np
 from abc import ABC, abstractmethod
-
-
-class StorageType(Enum):
-    FullMatrix = "full_matrix",
-    BipartiteMatrix = "bipartite_matrix",
-    SparseList = "sparse_list"
+from .bipartite_graph import BaseBipartiteGraph
 
 
 class BaseBipartiteGenerator(ABC):
@@ -20,16 +15,14 @@ class BaseBipartiteGenerator(ABC):
     """
 
     @abstractmethod
-    def generator(self, n: int, m: int, seed: int, storage: str, **kwargs) -> np.ndarray:
+    def generator(self, graph: BaseBipartiteGraph, seed: int, **kwargs) -> BaseBipartiteGraph:
         """
         Generate a type of bipartite graphs
 
-        :param n: number of vertices in the left set
-        :param m: number of vertices in the left set
+        :param graph: empty graph class of type BaseBipartiteGraph
         :param seed: seed for generator
-        :param storage: not implemented yet
         :param kwargs: used for additional arguments
-        :return: a compact adjacency matrix
+        :return: the same BaseBipartiteGraph instance provided
         """
         pass
 
