@@ -102,33 +102,37 @@ class BaseBipartiteGraph(ABC):
 class FullMatrixBipartiteGraph(BaseBipartiteGraph):
     """
     Graph class for storing adjacency matrix in a full 2D matrix.
+
+    The left set of the graph is represented by indices 0 ~ size_left-1
+    While the right set is represented by indices size_left ~ size_left+size_right-1
     """
 
-    def __init__(self, matrix: np.ndarray) -> None:
-        super().__init__()
+    def __init__(self, matrix: np.ndarray, size_left: int, size_right: int) -> None:
         assert len(matrix.shape) == 2
         assert matrix.shape[0] == matrix.shape[1]
         assert matrix.dtype == bool
 
-        self.size = matrix.shape[0]
+        super().__init__(size_left=size_left, size_right=size_right)
+
         self.matrix = matrix
 
     def list(self, i: int) -> np.ndarray:
-        """
-        get list of vertices connected to vertex i
-
-        :param i: vertex index
-        :return: np.ndarray of vertices connected to i
-        """
-
         return np.where(self.matrix[i, :])
 
     def connected(self, i: int, j: int) -> bool:
-        """
-        Check whether vertices i and j are connected or not
-
-        :param i: vertex index
-        :param j: vertex index
-        :return: True if vertices i and j are connected, False otherwise
-        """
         return self.matrix[i, j]
+
+    def blist(self, x: int, left_set: bool) -> np.ndarray:
+        if left_set:
+            return np.where(self.matrix[x, :])
+        else:
+            return np.where(self.matrix[x + self.size_left, :])
+
+    def bconnected(self, left: int, right: int) -> bool:
+        return self.matrix[left, right - self.size_left]
+
+    def bulk_connect(self, i: int, js: np.ndarray) -> None:
+        self.matrix[i, js] = True
+
+    def bulk_bconnect(self, left: int, rights: np.ndarray) -> None:
+        self.matrix[left, rights - self.size_left] = True
