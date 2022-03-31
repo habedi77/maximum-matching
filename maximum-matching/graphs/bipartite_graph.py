@@ -13,8 +13,10 @@ class BaseBipartiteGraph(ABC):
     arguments (no ``*args`` or ``**kwargs``).
     """
 
-    def __init__(self) -> None:
-        self.size = -1
+    def __init__(self, size_left: int, size_right: int) -> None:
+        self.size = size_left + size_right
+        self.size_left = size_left
+        self.size_right = size_right
         pass
 
     def __getitem__(self, key: Union[int, Tuple[int, int]]) -> Union[bool, np.ndarray]:
@@ -37,7 +39,7 @@ class BaseBipartiteGraph(ABC):
         get list of vertices connected to vertex i
 
         :param i: vertex index
-        :return: np.ndarray of vertices connected to i
+        :return: np.ndarray of vertex indices connected to i
         """
         pass
 
@@ -49,6 +51,50 @@ class BaseBipartiteGraph(ABC):
         :param i: vertex index
         :param j: vertex index
         :return: True if vertices i and j are connected, False otherwise
+        """
+        pass
+
+    @abstractmethod
+    def blist(self, x: int, left_set: bool) -> np.ndarray:
+        """
+        get list of vertices connected to vertex x in the specified set
+
+        :param left_set: whether x belongs in the left set or the right set
+        :param x: vertex index in specified set
+        :return: np.ndarray of vertex indices of the other set connected to x
+        """
+        pass
+
+    @abstractmethod
+    def bconnected(self, left: int, right: int) -> bool:
+        """
+        Check whether vertex form the left set is connected to the vertex from the right set
+
+        :param left: vertex index in the left set
+        :param right: vertex index in the right set
+        :return: True if vertices are connected, False otherwise
+        """
+        pass
+
+    @abstractmethod
+    def bulk_connect(self, i: int, js: np.ndarray) -> None:
+        """
+        Connect vertex i to js vertices
+
+        :param i: vertex index
+        :param js: array of vertex indices to connect to
+        :return: None
+        """
+        pass
+
+    @abstractmethod
+    def bulk_bconnect(self, left: int, rights: np.ndarray) -> None:
+        """
+        Connect vertex of the left set to the vertices of the right set
+
+        :param left: vertex index in the left set
+        :param rights: array of vertex indices in the right set
+        :return: None
         """
         pass
 
