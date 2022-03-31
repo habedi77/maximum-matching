@@ -36,16 +36,16 @@ class GaussianBipartiteGenerator(BaseBipartiteGenerator):
     arguments (no ``*args`` or ``**kwargs``).
     """
 
-    def generator(self, n: int, m: int, seed: int, storage: str, **kwargs) -> np.ndarray:
+    def generator(self, graph: BaseBipartiteGraph, seed: int, **kwargs) -> BaseBipartiteGraph:
         """
-        Generate a type of bipartite graphs
+        Connect the two sets of bipartite graphs with the **left set** having an expected degree value of 'mean'
 
-        :param n: number of vertices in the left set
-        :param m: number of vertices in the left set
+        :param graph: empty graph class of type BaseBipartiteGraph
         :param seed: seed for generator
-        :param storage: not implemented yet
         :param kwargs: used for additional arguments
-        :return: a compact adjacency matrix
+        :key mean: Gaussian distribution mean
+        :key std: Gaussian distribution std
+        :return: the same BaseBipartiteGraph instance provided
         """
 
         assert 'mean' in kwargs
@@ -53,28 +53,21 @@ class GaussianBipartiteGenerator(BaseBipartiteGenerator):
         mean = kwargs['mean']
         std = kwargs['std']
         assert type(mean) == float or type(mean) == int
-        assert type(std) == float
+        assert type(std) == float or type(mean) == int
 
-        degrees = np.floor(np.random.normal(loc=mean, scale=std, size=n))
+        size_left = graph.size_left
+        size_right = graph.size_right
 
-        # bound degrees to min(0) and max (m)
+        degrees = np.floor(np.random.normal(loc=mean, scale=std, size=size_left))
+
+        # bound degrees to min(0) and max(size_right)
         degrees[degrees < 0] = 0
-        degrees[degrees > m] = m
+        degrees[degrees > size_right] = size_right
 
-        basic_connectivity = np.empty(n, dtype=object)
+        _tmp_connectivity = np.empty(size_left, dtype=object)
 
-        for i in range(n):
-            basic_connectivity[i] = np.random.choice(m, size=degrees[i], replace=False)
+        for i in range(size_left):
+            _tmp_connectivity[i] = np.random.choice(size_right, size=degrees[i], replace=False)
+            graph.bulk_bconnect(i, _tmp_connectivity)
 
-        if storage is None or storage == StorageType.FullMatrix:
-            # TODO Optimize
-            size = n + m
-            result = np.zeros(size, dtype=bool)
-            for i in range(n):
-                for j in range(m):
-                    row, col = i, j + n
-                    result[row, col] = result[col, row] = j in basic_connectivity[i]
-        else:
-            raise ValueError(f"storage value '{storage}' not supported")
-
-        return result
+        return graph
