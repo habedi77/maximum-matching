@@ -65,7 +65,6 @@ class BaseBipartiteGraph(ABC):
         """
         pass
 
-    @abstractmethod
     def b_list(self, x: int, left_set: bool) -> np.ndarray:
         """
         get list of vertices connected to vertex x in the specified set
@@ -74,9 +73,11 @@ class BaseBipartiteGraph(ABC):
         :param x: vertex index in specified set
         :return: np.ndarray of vertex indices of the other set connected to x
         """
-        pass
+        if left_set:
+            return self.list(x) - self.size_left
+        else:
+            return self.list(x + self.size_left)
 
-    @abstractmethod
     def b_connected(self, left: int, right: int) -> bool:
         """
         Check whether vertex form the left set is connected to the vertex from the right set
@@ -85,9 +86,8 @@ class BaseBipartiteGraph(ABC):
         :param right: vertex index in the right set
         :return: True if vertices are connected, False otherwise
         """
-        pass
+        return self.connected(left, right + self.size_left)
 
-    @abstractmethod
     def b_bulk_connect(self, left: int, rights: np.ndarray) -> None:
         """
         Connect vertex of the left set to the vertices of the right set
@@ -96,7 +96,7 @@ class BaseBipartiteGraph(ABC):
         :param rights: array of vertex indices in the right set
         :return: None
         """
-        pass
+        self.bulk_connect(left, rights + self.size_left)
 
 
 class FullMatrixBipartiteGraph(BaseBipartiteGraph):
