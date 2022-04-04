@@ -109,7 +109,7 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
 
     def __init__(self, size_left: int, size_right: int) -> None:
         super().__init__(size_left=size_left, size_right=size_right)
-        self.matrix = np.zeros(self.size, self.size)
+        self.matrix = np.zeros((self.size, self.size), dtype=bool)
 
     def list(self, i: int) -> np.ndarray:
         return np.where(self.matrix[i, :])
