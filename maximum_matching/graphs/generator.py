@@ -74,6 +74,6 @@ class GaussianBipartiteGenerator(BaseBipartiteGenerator):
 
         for i in range(size_left):
             _tmp_connectivity[i] = np.random.choice(size_right, size=degrees[i], replace=False)
-            graph.bulk_bconnect(i, _tmp_connectivity[i])
+            graph.b_bulk_connect(i, _tmp_connectivity[i])
 
         return graph

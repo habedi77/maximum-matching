@@ -55,28 +55,6 @@ class BaseBipartiteGraph(ABC):
         pass
 
     @abstractmethod
-    def blist(self, x: int, left_set: bool) -> np.ndarray:
-        """
-        get list of vertices connected to vertex x in the specified set
-
-        :param left_set: whether x belongs in the left set or the right set
-        :param x: vertex index in specified set
-        :return: np.ndarray of vertex indices of the other set connected to x
-        """
-        pass
-
-    @abstractmethod
-    def bconnected(self, left: int, right: int) -> bool:
-        """
-        Check whether vertex form the left set is connected to the vertex from the right set
-
-        :param left: vertex index in the left set
-        :param right: vertex index in the right set
-        :return: True if vertices are connected, False otherwise
-        """
-        pass
-
-    @abstractmethod
     def bulk_connect(self, i: int, js: np.ndarray) -> None:
         """
         Connect vertex i to js vertices
@@ -88,7 +66,29 @@ class BaseBipartiteGraph(ABC):
         pass
 
     @abstractmethod
-    def bulk_bconnect(self, left: int, rights: np.ndarray) -> None:
+    def b_list(self, x: int, left_set: bool) -> np.ndarray:
+        """
+        get list of vertices connected to vertex x in the specified set
+
+        :param left_set: whether x belongs in the left set or the right set
+        :param x: vertex index in specified set
+        :return: np.ndarray of vertex indices of the other set connected to x
+        """
+        pass
+
+    @abstractmethod
+    def b_connected(self, left: int, right: int) -> bool:
+        """
+        Check whether vertex form the left set is connected to the vertex from the right set
+
+        :param left: vertex index in the left set
+        :param right: vertex index in the right set
+        :return: True if vertices are connected, False otherwise
+        """
+        pass
+
+    @abstractmethod
+    def b_bulk_connect(self, left: int, rights: np.ndarray) -> None:
         """
         Connect vertex of the left set to the vertices of the right set
 
@@ -120,15 +120,15 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
     def bulk_connect(self, i: int, js: np.ndarray) -> None:
         self.matrix[i, js] = True
 
-    def blist(self, x: int, left_set: bool) -> np.ndarray:
+    def b_list(self, x: int, left_set: bool) -> np.ndarray:
         if left_set:
             return np.where(self.matrix[x, :])[0] - self.size_left
         else:
             return np.where(self.matrix[x + self.size_left, :])[0]
 
-    def bconnected(self, left: int, right: int) -> bool:
+    def b_connected(self, left: int, right: int) -> bool:
         return self.matrix[left, right + self.size_left]
 
-    def bulk_bconnect(self, left: int, rights: np.ndarray) -> None:
+    def b_bulk_connect(self, left: int, rights: np.ndarray) -> None:
         self.matrix[left, rights + self.size_left] = True
         self.matrix[rights + self.size_left, left] = True
