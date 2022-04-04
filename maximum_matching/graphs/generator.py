@@ -64,7 +64,7 @@ class GaussianBipartiteGenerator(BaseBipartiteGenerator):
 
         graph = graph_class(size_left=size_left, size_right=size_right)
 
-        degrees = np.floor(np.random.normal(loc=mean, scale=std, size=size_left))
+        degrees = np.floor(np.random.normal(loc=mean, scale=std, size=size_left)).astype(int)
 
         # bound degrees to min(0) and max(size_right)
         degrees[degrees < 0] = 0
