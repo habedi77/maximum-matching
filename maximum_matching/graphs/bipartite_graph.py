@@ -8,9 +8,8 @@ class BaseBipartiteGraph(ABC):
     """
     Base class for bipartite graphs.
 
-    All subclasses should specify all the parameters that can be set
-    at the class level in their ``__init__`` as explicit keyword
-    arguments (no ``*args`` or ``**kwargs``).
+    All subclasses should use the same constructor (``__init__``) signature and call the base class first
+    ``def __init__(self, size_left: int, size_right: int) -> None:``
     """
 
     def __init__(self, size_left: int, size_right: int) -> None:

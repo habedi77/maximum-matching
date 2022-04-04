@@ -33,13 +33,6 @@ class BaseBipartiteGenerator(ABC):
 
 
 class GaussianBipartiteGenerator(BaseBipartiteGenerator):
-    """
-    bipartite graph generator based on gaussian noise.
-
-    All generators should specify all the parameters that can be set
-    at the class level in their ``__init__`` as explicit keyword
-    arguments (no ``*args`` or ``**kwargs``).
-    """
 
     def generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, **kwargs) -> G:
         """
