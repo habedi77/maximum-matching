@@ -119,6 +119,7 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
 
     def bulk_connect(self, i: int, js: np.ndarray) -> None:
         self.matrix[i, js] = True
+        self.matrix[js, i] = True
 
     def b_list(self, x: int, left_set: bool) -> np.ndarray:
         if left_set:
