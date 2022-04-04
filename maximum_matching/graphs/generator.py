@@ -62,6 +62,8 @@ class GaussianBipartiteGenerator(BaseBipartiteGenerator):
         assert type(mean) == float or type(mean) == int
         assert type(std) == float or type(mean) == int
 
+        np.random.seed(seed)
+
         graph = graph_class(size_left=size_left, size_right=size_right)
 
         degrees = np.floor(np.random.normal(loc=mean, scale=std, size=size_left)).astype(int)
