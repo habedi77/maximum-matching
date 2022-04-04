@@ -1,8 +1,11 @@
 from enum import Enum
+from typing import TypeVar, Type
 
 import numpy as np
 from abc import ABC, abstractmethod
 from .bipartite_graph import BaseBipartiteGraph
+
+G = TypeVar('G', bound=BaseBipartiteGraph)
 
 
 class BaseBipartiteGenerator(ABC):
@@ -15,7 +18,7 @@ class BaseBipartiteGenerator(ABC):
     """
 
     @abstractmethod
-    def generate(self, size_left: int, size_right: int, graph_class: type, seed: int, **kwargs) -> BaseBipartiteGraph:
+    def generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, **kwargs) -> G:
         """
         Generate a type of bipartite graphs
 
@@ -38,7 +41,7 @@ class GaussianBipartiteGenerator(BaseBipartiteGenerator):
     arguments (no ``*args`` or ``**kwargs``).
     """
 
-    def generate(self, size_left: int, size_right: int, graph_class: type, seed: int, **kwargs) -> BaseBipartiteGraph:
+    def generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, **kwargs) -> G:
         """
         Connect the two sets of bipartite graphs with the **left set** having an expected degree value of 'mean'
 
