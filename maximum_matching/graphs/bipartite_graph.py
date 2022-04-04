@@ -112,22 +112,23 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
         self.matrix = np.zeros((self.size, self.size), dtype=bool)
 
     def list(self, i: int) -> np.ndarray:
-        return np.where(self.matrix[i, :])
+        return np.where(self.matrix[i, :])[0]
 
     def connected(self, i: int, j: int) -> bool:
         return self.matrix[i, j]
 
-    def blist(self, x: int, left_set: bool) -> np.ndarray:
-        if left_set:
-            return np.where(self.matrix[x, :])
-        else:
-            return np.where(self.matrix[x + self.size_left, :])
-
-    def bconnected(self, left: int, right: int) -> bool:
-        return self.matrix[left, right - self.size_left]
-
     def bulk_connect(self, i: int, js: np.ndarray) -> None:
         self.matrix[i, js] = True
 
+    def blist(self, x: int, left_set: bool) -> np.ndarray:
+        if left_set:
+            return np.where(self.matrix[x, :])[0] - self.size_left
+        else:
+            return np.where(self.matrix[x + self.size_left, :])[0]
+
+    def bconnected(self, left: int, right: int) -> bool:
+        return self.matrix[left, right + self.size_left]
+
     def bulk_bconnect(self, left: int, rights: np.ndarray) -> None:
-        self.matrix[left, rights - self.size_left] = True
+        self.matrix[left, rights + self.size_left] = True
+        self.matrix[rights + self.size_left, left] = True
