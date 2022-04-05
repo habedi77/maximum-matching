@@ -1,20 +1,19 @@
-from Flags import Algorithms
-from ..utility import Generator
-from Vazirani import run_vazirani
-
-
-def main():
-    running_algorithms = [Algorithms.vazirani]
-    gen = Generator()
-
-    # Run the program
-    test(gen, running_algorithms)
+from maximum_matching.maximum_matching.utility.Generator import Gen
+from maximum_matching.maximum_matching.algorithms.Vazirani import Vaz
 
 
 # Test the list of algorithms on the given generator
 def test(generator, algorithms):
-    randGraph = generator.generateBipartite()
-
     for i in algorithms:
-        if i == Algorithms.vazirani:
-            run_vazirani(randGraph)
+        i.run()
+
+
+# 'Main function'
+if __name__ == "__main__":
+    gen = Gen()
+    randGraph = gen.generateBipartite()
+
+    running_algorithms = [Vaz(randGraph, gen)]
+
+    # Run the program
+    test(gen, running_algorithms)
