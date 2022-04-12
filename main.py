@@ -18,7 +18,7 @@ algorithms = [
 
 
 # Test the list of algorithms on the given generator
-def test(graph: graphs.BaseGraph, algorithms: List[alg.AlgorithmBase]):
+def test(graph: graphs.GraphBase, algorithms: List[alg.AlgorithmBase]):
     for i in algorithms:
         i.run(graph)
 

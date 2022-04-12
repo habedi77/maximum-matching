@@ -7,7 +7,7 @@ from .algorithm_base import AlgorithmBase
 
 class Vazirani(AlgorithmBase):
 
-    def run(self, graph: BaseGraph) -> Any:
+    def run(self, graph: GraphBase) -> Any:
         """
         Run Vazirani algorithm
         Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf

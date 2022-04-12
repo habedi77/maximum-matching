@@ -1,4 +1,4 @@
-from ..graphs.graph_base import BaseGraph
+from ..graphs.graph_base import GraphBase
 from typing import Union, Tuple, Any
 
 from abc import ABC, abstractmethod
@@ -15,7 +15,7 @@ class AlgorithmBase(ABC):
         pass
 
     @abstractmethod
-    def run(self, graph: BaseGraph) -> Any:
+    def run(self, graph: GraphBase) -> Any:
         """
         Run the matching algorithm on the given graph
 

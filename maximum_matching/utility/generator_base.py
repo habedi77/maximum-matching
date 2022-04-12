@@ -2,9 +2,9 @@ from typing import TypeVar, Type
 
 import numpy as np
 from abc import ABC, abstractmethod
-from ..graphs.graph_base import BaseGraph
+from ..graphs.graph_base import GraphBase
 
-G = TypeVar('G', bound=BaseGraph)
+G = TypeVar('G', bound=GraphBase)
 
 
 class BaseBipartiteGenerator(ABC):
