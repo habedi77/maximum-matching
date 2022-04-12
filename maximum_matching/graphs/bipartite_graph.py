@@ -3,6 +3,13 @@ from typing import Union, Tuple
 import numpy as np
 from abc import ABC, abstractmethod
 
+from enum import Enum
+
+
+class BipartiteSet(Enum):
+    left = True
+    right = False
+
 
 class BaseBipartiteGraph(ABC):
     """
@@ -33,7 +40,7 @@ class BaseBipartiteGraph(ABC):
             raise TypeError('index ' + str(key) + ' must be int or a tuple with two ints')
 
     @abstractmethod
-    def get_independent_set(self, left_set: bool) -> np.ndarray:
+    def get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
         """
         Get vertices in the left or right set
 
@@ -75,7 +82,7 @@ class BaseBipartiteGraph(ABC):
         pass
 
     @abstractmethod
-    def b_get_independent_set(self, left_set: bool) -> np.ndarray:
+    def b_get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
         """
         Get vertices in the left or right set
 
@@ -130,7 +137,7 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
         super().__init__(size_left=size_left, size_right=size_right)
         self.matrix = np.zeros((self.size, self.size), dtype=bool)
 
-    def get_independent_set(self, left_set: bool) -> np.ndarray:
+    def get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
         if left_set:
             return np.arange(0, self.size_left)
         else:
@@ -146,7 +153,7 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
         self.matrix[i, js] = True
         self.matrix[js, i] = True
 
-    def b_get_independent_set(self, left_set: bool) -> np.ndarray:
+    def b_get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
         if left_set:
             return np.arange(0, self.size_left)
         else:

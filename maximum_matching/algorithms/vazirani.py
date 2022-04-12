@@ -1,5 +1,5 @@
 from random import shuffle
-from ..graphs.bipartite_graph import BaseBipartiteGraph
+from ..graphs.bipartite_graph import *
 
 
 class Vazirani:
@@ -12,7 +12,7 @@ class Vazirani:
     # Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
     def run(self, graph: BaseBipartiteGraph):
         # Assumption: Boys arrive first [left = boys, right = girls]
-        boys = graph.b_get_independent_set(left_set=True)
+        boys = graph.b_get_independent_set(left_set=BipartiteSet.left)
 
         if len(boys) == 0:
             raise ValueError("The left set of the graph is empty")
