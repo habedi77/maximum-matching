@@ -1,4 +1,4 @@
-from ..graphs.bipartite_graph import BaseBipartiteGraph
+from ..graphs.bipartite_graph import BaseGraph
 from typing import Union, Tuple, Any
 
 from abc import ABC, abstractmethod
@@ -15,7 +15,7 @@ class AlgorithmBase(ABC):
         pass
 
     @abstractmethod
-    def run(self, graph: BaseBipartiteGraph) -> Any:
+    def run(self, graph: BaseGraph) -> Any:
         """
         Run the matching algorithm on the given graph
 

@@ -11,7 +11,7 @@ class BipartiteSet(Enum):
     right = False
 
 
-class BaseBipartiteGraph(ABC):
+class BaseGraph(ABC):
     """
     Base class for bipartite graphs.
 

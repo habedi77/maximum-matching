@@ -1,9 +1,9 @@
-from .bipartite_graph import BaseBipartiteGraph, BipartiteSet
+from .bipartite_graph import BaseGraph, BipartiteSet
 import numpy as np
 from typing import Union
 
 
-class FullMatrixBipartiteGraph(BaseBipartiteGraph):
+class FullMatrixGraph(BaseGraph):
     """
     Graph class for storing adjacency matrix in a full 2D matrix.
 
