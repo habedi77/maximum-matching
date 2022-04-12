@@ -1,19 +1,30 @@
 import maximum_matching.graphs as graphs
 import maximum_matching.utility.generator as generator
-from maximum_matching.algorithms.Vazirani import Vaz
+from maximum_matching.algorithms.vazirani import Vazirani
+
+generators = [
+    generator.GaussianBipartiteGenerator(),
+]
+
+algorithms = [
+    Vazirani(),
+]
+
 
 # Test the list of algorithms on the given generator
-def test(generator, algorithms):
+def test(graph, algorithms):
     for i in algorithms:
-        i.run()
+        i.run(graph)
 
 
 # 'Main function'
 if __name__ == "__main__":
-    gen = Gen()
-    randGraph = gen.generateBipartite()
 
-    running_algorithms = [Vaz(randGraph, gen)]
+    kwargs = {"mean": 10, "std": 1}
 
-    # Run the program
-    test(gen, running_algorithms)
+    # TODO
+    for gen in generators:
+        graph = gen.generate(size_left=100, size_right=100, seed=0,
+                             graph_class=graphs.FullMatrixBipartiteGraph, **kwargs)
+        # Run the program
+        test(graph, algorithms)
