@@ -2,7 +2,7 @@ from typing import TypeVar, Type
 
 import numpy as np
 from abc import ABC, abstractmethod
-from ..graphs.bipartite_graph import BaseGraph
+from ..graphs.graph_base import BaseGraph
 
 G = TypeVar('G', bound=BaseGraph)
 

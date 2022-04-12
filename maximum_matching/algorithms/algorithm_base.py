@@ -1,4 +1,4 @@
-from ..graphs.bipartite_graph import BaseGraph
+from ..graphs.graph_base import BaseGraph
 from typing import Union, Tuple, Any
 
 from abc import ABC, abstractmethod

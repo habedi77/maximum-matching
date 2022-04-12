@@ -1,4 +1,4 @@
-from .bipartite_graph import BaseGraph, BipartiteSet
+from .graph_base import BaseGraph, BipartiteSet
 import numpy as np
 from typing import Union
 

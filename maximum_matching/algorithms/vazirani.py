@@ -1,7 +1,7 @@
 from random import shuffle
 from typing import Any
 
-from ..graphs.bipartite_graph import *
+from ..graphs.graph_base import *
 from .algorithm_base import AlgorithmBase
 
 

@@ -1,2 +1,2 @@
-from bipartite_graph import BipartiteSet, BaseGraph
-from full_matrix import FullMatrixGraph
+from . import graph_base
+from . import full_matrix
