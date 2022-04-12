@@ -1,4 +1,2 @@
-# from . import generator
-# from . import indexing
-import maximum_matching.utility.generator
-import maximum_matching.utility.indexing
+from .generator import BaseBipartiteGenerator, GaussianBipartiteGenerator
+from . import indexing

@@ -1,2 +1,2 @@
-import maximum_matching.algorithms.algorithm_base
-import maximum_matching.algorithms.vazirani
+from .algorithm_base import AlgorithmBase
+from .vazirani import Vazirani
