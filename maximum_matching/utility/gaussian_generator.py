@@ -1,9 +1,9 @@
 from typing import TypeVar, Type
 import numpy as np
-from .generator_base import BaseBipartiteGenerator, G
+from .generator_base import GeneratorBase, G
 
 
-class GaussianBipartiteGenerator(BaseBipartiteGenerator):
+class GaussianGenerator(GeneratorBase):
 
     def generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, **kwargs) -> G:
         """

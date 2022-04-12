@@ -7,7 +7,7 @@ from ..graphs.graph_base import GraphBase
 G = TypeVar('G', bound=GraphBase)
 
 
-class BaseBipartiteGenerator(ABC):
+class GeneratorBase(ABC):
     """
     Base class for all bipartite generators.
 
