@@ -1,16 +1,25 @@
 from random import shuffle
+from typing import Any
+
 from ..graphs.bipartite_graph import *
+from .algorithm_base import AlgorithmBase
 
 
-class Vazirani:
+class Vazirani(AlgorithmBase):
 
-    # Run Vazirani algorithm
-    # Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf
-    # Given a bipartite graph G(U,V,E)
-    # Assumption: Graphs are not necessarily complete [Contrary to the paper]
-    # Let V = girls, U = boys, where U represents rows of an nxn matrix to vertices in U
-    # Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
-    def run(self, graph: BaseBipartiteGraph):
+    def run(self, graph: BaseBipartiteGraph) -> Any:
+        """
+        Run Vazirani algorithm
+        Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf
+        Given a bipartite graph G(U,V,E)
+
+        Assumption: Graphs are not necessarily complete [Contrary to the paper]
+        Let V = girls, U = boys, where U represents rows of an nxn matrix to vertices in U
+        Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
+
+        :param graph: a graph instance from the BaseBipartiteGraph abstract
+        :return: TODO
+        """
         # Assumption: Boys arrive first [left = boys, right = girls]
         boys = graph.b_get_independent_set(left_set=BipartiteSet.left)
 
