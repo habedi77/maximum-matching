@@ -2,7 +2,7 @@ from random import shuffle
 from ..graphs.bipartite_graph import BaseBipartiteGraph
 
 
-class Vaz:
+class Vazirani:
 
     # Run Vazirani algorithm
     # Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf
