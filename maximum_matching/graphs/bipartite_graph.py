@@ -33,6 +33,16 @@ class BaseBipartiteGraph(ABC):
             raise TypeError('index ' + str(key) + ' must be int or a tuple with two ints')
 
     @abstractmethod
+    def get_independent_set(self, left_set: bool) -> np.ndarray:
+        """
+        Get vertices in the left or right set
+
+        :param left_set: Get either the left set or the right set
+        :return: np.ndarray of vertex indices of the left or right set
+        """
+        pass
+
+    @abstractmethod
     def list(self, i: int) -> np.ndarray:
         """
         get list of vertices connected to vertex i
@@ -61,6 +71,16 @@ class BaseBipartiteGraph(ABC):
         :param i: vertex index
         :param js: array of vertex indices to connect to
         :return: None
+        """
+        pass
+
+    @abstractmethod
+    def b_get_independent_set(self, left_set: bool) -> np.ndarray:
+        """
+        Get vertices in the left or right set
+
+        :param left_set: Get either the left set or the right set
+        :return: np.ndarray of vertex indices of the left or right set
         """
         pass
 
@@ -110,6 +130,12 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
         super().__init__(size_left=size_left, size_right=size_right)
         self.matrix = np.zeros((self.size, self.size), dtype=bool)
 
+    def get_independent_set(self, left_set: bool) -> np.ndarray:
+        if left_set:
+            return np.arange(0, self.size_left)
+        else:
+            return np.arange(self.size_left, self.size_right)
+
     def list(self, i: int) -> np.ndarray:
         return np.where(self.matrix[i, :])[0]
 
@@ -119,6 +145,12 @@ class FullMatrixBipartiteGraph(BaseBipartiteGraph):
     def bulk_connect(self, i: int, js: np.ndarray) -> None:
         self.matrix[i, js] = True
         self.matrix[js, i] = True
+
+    def b_get_independent_set(self, left_set: bool) -> np.ndarray:
+        if left_set:
+            return np.arange(0, self.size_left)
+        else:
+            return np.arange(0, self.size_right)
 
     def b_list(self, x: int, left_set: bool) -> np.ndarray:
         if left_set:
