@@ -1,6 +1,6 @@
-from maximum_matching.maximum_matching.utility.Generator import Gen
-from maximum_matching.maximum_matching.algorithms.Vazirani import Vaz
-
+import maximum_matching.graphs as graphs
+import maximum_matching.utility.generator as generator
+from maximum_matching.algorithms.Vazirani import Vaz
 
 # Test the list of algorithms on the given generator
 def test(generator, algorithms):
