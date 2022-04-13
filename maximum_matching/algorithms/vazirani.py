@@ -1,5 +1,5 @@
 from random import shuffle
-from typing import Any
+from typing import Any, List
 
 from ..graphs.graph_base import *
 from .algorithm_base import AlgorithmBase
@@ -7,7 +7,7 @@ from .algorithm_base import AlgorithmBase
 
 class Vazirani(AlgorithmBase):
 
-    def run(self, graph: GraphBase) -> Any:
+    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
         """
         Run Vazirani algorithm
         Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf
@@ -18,7 +18,7 @@ class Vazirani(AlgorithmBase):
         Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
 
         :param graph: a graph instance from the BaseBipartiteGraph abstract
-        :return: TODO
+        :return: the final matching size with a list of matching size trend
         """
         # Assumption: Boys arrive first [left = boys, right = girls]
         boys = graph.b_get_independent_set(left_set=BipartiteSet.left)
@@ -40,4 +40,4 @@ class Vazirani(AlgorithmBase):
 
             # TODO incomplete
 
-        return
+        return -1, []
