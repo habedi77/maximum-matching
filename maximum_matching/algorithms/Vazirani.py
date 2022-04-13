@@ -4,7 +4,7 @@ from Flags import BipartiteSet
 
 # Returns the 'other' vertex associated with the edge
 # Let an edge be A -> B, for vertices A and B
-# Our of {A,B} this returns vertex - {A,B}
+# Of {A,B} this returns: vertex - {A,B}
 def op_vertex_of_edge(vertex, edge):
     # TODO
     # Need to merge branch with proper Generator to complete
@@ -70,12 +70,15 @@ class Vaz:
                 if is_valid_match(max_matching, edge):
                     valid_matches.append([edge, boys.index(op_vertex_of_edge(vertex, edge))])
 
-            highest_rank = 0
+            highest_rank = []
             for i in valid_matches:
-                if i[1] > highest_rank:
+                if i[1] < highest_rank:
                     highest_rank = i
 
-            max_matching.append(i[0])
+            # Use the edge to the highest ranked eligible boy
+            if len(highest_rank > 0):
+                max_matching.append(highest_rank[0])
+
             valid_matches.clear()
 
         return max_matching
