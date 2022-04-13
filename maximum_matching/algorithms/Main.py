@@ -13,7 +13,7 @@ if __name__ == "__main__":
     gen = Gen()
     randGraph = gen.generateBipartite()
 
-    running_algorithms = [Vaz(randGraph, gen)]
+    running_algorithms = [Vaz(randGraph, gen, True)]
 
     # Run the program
     test(gen, running_algorithms)
