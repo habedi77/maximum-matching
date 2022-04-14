@@ -14,6 +14,7 @@ generators = [
 
 algorithms = [
     alg.Vazirani(),
+    alg.Oblivious()
 ]
 
 
