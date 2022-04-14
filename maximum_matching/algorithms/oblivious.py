@@ -1,5 +1,5 @@
 import random
-from typing import Any
+from typing import List, Tuple, Union
 
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
@@ -7,7 +7,22 @@ from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
 class Oblivious(AlgorithmBase): 
     
-    def run(self, graph: GraphBase) -> Any:
+    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
+        """
+        Run Oblivious algorithm
+        Based on "Greedy Online Bipartite Matching on Random Graphs"
+
+        The oblivious algorithm performs a “one shot” trial for each unknown_node j, 
+        where it attempts to match j to a random neighbor. 
+        The algorithm is unaware of which known_nodes are already matched, 
+        so an attempted match to an already matched known_nodes means that unknown_node j is dropped.
+
+        :param graph: a graph instance from the BaseBipartiteGraph abstract
+        :return: the final matching size with a list of matching size trend
+        """
+
+        print("Started running Oblivious")
+
         known_nodes = graph.b_get_independent_set(BipartiteSet.left)
         unknown_nodes = graph.b_get_independent_set(BipartiteSet.right)
 
@@ -16,6 +31,7 @@ class Oblivious(AlgorithmBase):
             matched[known_node] = False
 
         count_matches = 0
+        matched_edges = []
         for unknown_node in unknown_nodes:
             neighbours = graph.list(unknown_node)
 
@@ -26,5 +42,7 @@ class Oblivious(AlgorithmBase):
                 if matched.get(random_neighbour) is False:
                     matched[random_neighbour] = True
                     count_matches += 1
+                    matched_edges.append([random_neighbour, unknown_node])
         
-        print("Matched: ", count_matches)
+        print("Finished running Oblivious")
+        return count_matches, matched_edges
