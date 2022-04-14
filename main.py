@@ -13,8 +13,7 @@ generators = [
 ]
 
 algorithms = [
-    # alg.Vazirani(),
-    alg.Oblivious()
+    alg.Vazirani(),
 ]
 
 
