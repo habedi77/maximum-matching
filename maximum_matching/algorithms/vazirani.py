@@ -46,8 +46,12 @@ class Vaz(AlgorithmBase):
 
         # Array of edges in our matching
         max_matching = []
+        trend = [[len(boys), 0]]
+        num_girls_evaluated = 0
 
         for vertex in girls:
+            num_girls_evaluated = num_girls_evaluated + 1
+
             # As each girl arrives, match her to the eligible boy of the highest rank
             neighbours_of_vertex = graph.list(vertex)
 
@@ -67,7 +71,8 @@ class Vaz(AlgorithmBase):
             # Use the edge to the highest ranked eligible boy
             if len(highest_rank) > 0:
                 max_matching.append(highest_rank[0])
+                trend.append([len(boys) + num_girls_evaluated, len(max_matching)])
 
             valid_matches.clear()
 
-        return [len(max_matching), max_matching]
+        return [len(max_matching), trend]

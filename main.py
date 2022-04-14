@@ -11,7 +11,7 @@ PRINT_OUTPUT = True
 # List the algorithms you would like the program to run
 _algorithms = [
     Vaz(),  # Vazirani (Online)
-    # (Not yet Complete) Bloss  # Blossom algorithm (Optimal)
+    # (Not yet Complete) Bloss()  # Blossom algorithm (Optimal)
 ]
 
 
@@ -30,6 +30,8 @@ def run_on_graph(graph: graphs.GraphBase, algorithms) -> List[Dict]:
         matching_size, trend = algr.run(graph=graph)
 
         if PRINT_OUTPUT:
+            print(matching_size)
+            print(trend)
             results.append({
                 "name": type(algr).__name__,
                 "matching_size": matching_size,
