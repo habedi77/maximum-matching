@@ -1,16 +1,21 @@
 from typing import List, Dict
 from tqdm import tqdm
-
-import maximum_matching.algorithms as alg
+from maximum_matching.algorithms.Vazirani import Vaz
+from maximum_matching.algorithms.Blossom import Bloss
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
 
+# For testing
+PRINT_OUTPUT = True
+
+# List the algorithms you would like the program to run
 _algorithms = [
-    alg.Vazirani(),
+    Vaz(),  # Vazirani (Online)
+    # (Not yet Complete) Bloss  # Blossom algorithm (Optimal)
 ]
 
 
-def run_on_graph(graph: graphs.GraphBase, algorithms: List[alg.AlgorithmBase]) -> List[Dict]:
+def run_on_graph(graph: graphs.GraphBase, algorithms) -> List[Dict]:
     """
     Runts tests with a list on algorithms on a given graph
 
@@ -21,15 +26,15 @@ def run_on_graph(graph: graphs.GraphBase, algorithms: List[alg.AlgorithmBase]) -
 
     results = []
 
-    for alg in tqdm(algorithms, desc="Algorithms", position=1, ncols=80, ascii=True, leave=False):
-        matching_size, trend = alg.run(graph)
+    for algr in tqdm(algorithms, desc="Algorithms", position=1, ncols=80, ascii=True, leave=False):
+        matching_size, trend = algr.run(graph=graph)
 
-        results.append({
-            "name": type(alg).__name__,
-            "matching_size": matching_size,
-            "trend": trend,
-        })
-        pass
+        if PRINT_OUTPUT:
+            results.append({
+                "name": type(algr).__name__,
+                "matching_size": matching_size,
+                "trend": trend,
+            })
 
     return results
 
@@ -39,7 +44,6 @@ if __name__ == "__main__":
     tests = util.parser.load_tests_csv()
 
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Tests", position=0, ncols=80, ascii=True):
-
         g: graphs.GraphBase = t["generator"].generate(graph_class=graphs.FullMatrixGraph, **t.to_dict())
         run_on_graph(g, _algorithms)
         pass
