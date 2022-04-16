@@ -51,10 +51,14 @@ class FullMatrixGraph(GraphBase):
         self.matrix[rights + self.size_left, left] = 1
 
     def w_list(self, i: int) -> np.ndarray:
-        pass
+        idx = np.where(self.matrix[i, :] > 0)[0]
+        ws = self.matrix[i, idx]
+        r = np.hstack((idx.reshape(-1, 1), ws.reshape(-1, 1)))
+        return r
 
     def w_connected(self, i: int, j: int) -> int:
-        pass
+        return self.matrix[i, j]
 
     def w_bulk_connect(self, i: int, js: np.ndarray) -> None:
-        pass
+        self.matrix[i, js[:, 0]] = js[:, 1]
+        self.matrix[js[:, 0], i] = js[:, 1]
