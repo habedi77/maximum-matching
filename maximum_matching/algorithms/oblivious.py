@@ -39,13 +39,12 @@ class Oblivious(AlgorithmBase):
 
         for unknown_node in unknown_nodes:
             visited_vertices += 1
-            neighbours = graph.list(unknown_node)
+            neighbours = graph.b_list(unknown_node, BipartiteSet.right)
 
             if len(neighbours) > 0:
                 random_id = random.randint(0, len(neighbours) - 1)
 
-                # doing len(known_nodes) because ids starts from 0 in both the sides
-                random_neighbour = neighbours[random_id] - len(known_nodes)
+                random_neighbour = neighbours[random_id]
 
                 if matched.get(random_neighbour) is False:
                     matched[random_neighbour] = True
