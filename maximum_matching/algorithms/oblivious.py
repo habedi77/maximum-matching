@@ -5,17 +5,20 @@ from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
 
-class Oblivious(AlgorithmBase): 
+class Oblivious(AlgorithmBase):
+    """
+    Oblivious algorithm
+    Based on "Greedy Online Bipartite Matching on Random Graphs"
+
+    The oblivious algorithm performs a “one shot” trial for each unknown_node j, 
+    where it attempts to match j to a random neighbor. 
+    The algorithm is unaware of which known_nodes are already matched, 
+    so an attempted match to an already matched known_nodes means that unknown_node j is dropped.
+    """
     
     def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
         """
         Run Oblivious algorithm
-        Based on "Greedy Online Bipartite Matching on Random Graphs"
-
-        The oblivious algorithm performs a “one shot” trial for each unknown_node j, 
-        where it attempts to match j to a random neighbor. 
-        The algorithm is unaware of which known_nodes are already matched, 
-        so an attempted match to an already matched known_nodes means that unknown_node j is dropped.
 
         :param graph: a graph instance from the BaseBipartiteGraph abstract
         :return: the final matching size with a list of matching size trend
@@ -53,4 +56,4 @@ class Oblivious(AlgorithmBase):
             trends.append([visited_vertices, count_matches])
         
         print("Finished running Oblivious")
-        return [count_matches, trends]
+        return (count_matches, trends)
