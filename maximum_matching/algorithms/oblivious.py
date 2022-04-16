@@ -27,12 +27,18 @@ class Oblivious(AlgorithmBase):
         unknown_nodes = graph.b_get_independent_set(BipartiteSet.right)
 
         matched = {}
+        visited_vertices = 0
         for known_node in known_nodes:
+            visited_vertices += 1
             matched[known_node] = False
 
         count_matches = 0
-        matched_edges = []
+        trends = []
+        
+        trends.append([visited_vertices, count_matches])
+
         for unknown_node in unknown_nodes:
+            visited_vertices += 1
             neighbours = graph.list(unknown_node)
 
             if len(neighbours) > 0:
@@ -42,7 +48,8 @@ class Oblivious(AlgorithmBase):
                 if matched.get(random_neighbour) is False:
                     matched[random_neighbour] = True
                     count_matches += 1
-                    matched_edges.append([random_neighbour, unknown_node])
+
+            trends.append([visited_vertices, count_matches])
         
         print("Finished running Oblivious")
-        return count_matches, matched_edges
+        return [count_matches, trends]
