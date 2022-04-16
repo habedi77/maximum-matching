@@ -43,6 +43,8 @@ class Oblivious(AlgorithmBase):
 
             if len(neighbours) > 0:
                 random_id = random.randint(0, len(neighbours) - 1)
+
+                # doing len(known_nodes) because ids starts from 0 in both the sides
                 random_neighbour = neighbours[random_id] - len(known_nodes)
 
                 if matched.get(random_neighbour) is False:
