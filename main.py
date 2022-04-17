@@ -1,6 +1,6 @@
 from typing import List, Dict
 from tqdm import tqdm
-from maximum_matching.algorithms.Vazirani import Vaz
+from maximum_matching.algorithms.vazirani import Vaz
 from maximum_matching.algorithms.Rand import Rand
 from maximum_matching.algorithms.MinDegree import MinDeg
 import maximum_matching.algorithms as alg
