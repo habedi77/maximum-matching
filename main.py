@@ -34,7 +34,7 @@ def run_on_graph(graph: graphs.GraphBase, algorithms) -> List[Dict]:
 
         if PRINT_OUTPUT:
             print(matching_size)
-
+            
         results.append({
             "name": type(algr).__name__,
             "matching_size": matching_size,
