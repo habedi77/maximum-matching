@@ -10,7 +10,7 @@ class AlgorithmBase(ABC):
     Algorithm implementations override the run class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @abstractmethod

@@ -9,11 +9,13 @@ from ..graphs.graph_base import BipartiteSet
 
 
 class Rand(AlgorithmBase):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    # Randomized online bipartite algorithm
-    # As a vertex arrives, match with a random edge
+    """
+    Randomized online bipartite algorithm
+    As a vertex arrives, match with a random edge
+    """
     def run(self, graph) -> Tuple[int, Union[List, None]]:
         # Assumption: left arrive first [left, right = the bipartite graph G = {L, R, E}]
         left = graph.get_independent_set(BipartiteSet.left)

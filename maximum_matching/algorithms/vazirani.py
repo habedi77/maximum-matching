@@ -10,16 +10,18 @@ from ..graphs.graph_base import BipartiteSet
 
 
 class Vaz(AlgorithmBase):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    # Run Vazirani algorithm
-    # Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf
-    # Given a bipartite graph G(U,V,E)
-    # Assumption: Graphs are not necessarily complete [Contrary to the paper]
-    # Let V = girls, U = boys, where U represents rows of an nxn matrix to vertices in U
-    # Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
-    # Return the maximum_matching. Or well, the 'estimated' best matching.
+    """
+    Run Vazirani algorithm
+    Based on https://people.eecs.berkeley.edu/~vazirani/pubs/online.pdf
+    Given a bipartite graph G(U,V,E)
+    Assumption: Graphs are not necessarily complete [Contrary to the paper]
+    Let V = girls, U = boys, where U represents rows of an nxn matrix to vertices in U
+    Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
+    Return the maximum_matching. Or well, the 'estimated' best matching.
+    """
     def run(self, graph) -> Tuple[int, Union[List, None]]:
         # Assumption: Boys arrive first [left = boys, right = girls]
         boys = graph.get_independent_set(BipartiteSet.left)
