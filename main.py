@@ -2,12 +2,15 @@ from typing import List, Dict
 from tqdm import tqdm
 
 import maximum_matching.algorithms as alg
+from maximum_matching.algorithms.feldmanTSM import FeldmanTSM
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
 
 _algorithms = [
     alg.Vazirani(),
-    alg.Oblivious()
+    alg.Oblivious(),
+    # alg.FeldmanTSM(),
+    alg.MaxFlow()
 ]
 
 
