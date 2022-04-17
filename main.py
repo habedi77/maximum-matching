@@ -13,7 +13,8 @@ PRINT_OUTPUT = True
 _algorithms = [
     Vaz(),  # Vazirani (Online)
     Rand(),
-    MinDeg()
+    MinDeg(),
+    alg.Oblivious()
 ]
 
 
