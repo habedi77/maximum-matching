@@ -1,5 +1,6 @@
-import random
 from typing import List, Tuple, Union
+
+import numpy as np
 
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
@@ -24,6 +25,8 @@ class Oblivious(AlgorithmBase):
         :return: the final matching size with a list of matching size trend
         """
 
+        np.random.seed(0)
+        
         print("Started running Oblivious")
 
         known_nodes = graph.b_get_independent_set(BipartiteSet.left)
@@ -45,7 +48,7 @@ class Oblivious(AlgorithmBase):
             neighbours = graph.b_list(unknown_node, BipartiteSet.right)
 
             if len(neighbours) > 0:
-                random_id = random.randint(0, len(neighbours) - 1)
+                random_id = np.random.randint(0, len(neighbours))
 
                 random_neighbour = neighbours[random_id]
 
