@@ -1,5 +1,6 @@
 from typing import List, Tuple, Union
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
+from maximum_matching.algorithms.max_flow import MaxFlow
 from maximum_matching.graphs.graph_base import GraphBase
 
 
@@ -24,7 +25,22 @@ class FeldmanTSM(AlgorithmBase):
         Otherwise, ignore.
     """
 
-    def runMaxFlow():
+    def runMaxFlow(self, historicGraph: GraphBase):
+
+        maxFlow = MaxFlow()
+        src, sink, n = maxFlow.prepare_graph(historicGraph, sourceSinkCap=2)
+        count_matches = maxFlow.run_max_flow(src, sink, n)
+
+        # Find the edges from A to B of non-zero (must be unit) flow.
+        for u in range(n):
+            for v in range(n):
+                if (u == src or u == sink or v == src or v == sink): continue
+
+                if maxFlow.capacity[u][v] == 1:
+                    print("Found {} to {}".format(u, v))
+                elif maxFlow.capacity[u][v] > 1:
+                    raise ValueError('Capacity should not be more than 1!')
+
         pass
 
     def runRedBlue():
@@ -34,5 +50,6 @@ class FeldmanTSM(AlgorithmBase):
         pass
 
     def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
-        print("Hello TSM!")
+        # print("Hello TSM!")
+        self.runMaxFlow(historicGraph=historicGraph)
         return (0, [0, 0])
