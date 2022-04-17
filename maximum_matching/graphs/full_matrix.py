@@ -13,39 +13,52 @@ class FullMatrixGraph(GraphBase):
 
     def __init__(self, size_left: int, size_right: int) -> None:
         super().__init__(size_left=size_left, size_right=size_right)
-        self.matrix = np.zeros((self.size, self.size), dtype=bool)
+        self.matrix = np.zeros((self.size, self.size), dtype=int)
 
     def get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
-        if left_set:
+        if left_set == True or left_set == BipartiteSet.left:
             return np.arange(0, self.size_left)
         else:
-            return np.arange(self.size_left, self.size_right)
+            return np.arange(self.size_left, self.size_left + self.size_right)
 
     def list(self, i: int) -> np.ndarray:
-        return np.where(self.matrix[i, :])[0]
+        return np.where(self.matrix[i, :] > 0)[0]
 
     def connected(self, i: int, j: int) -> bool:
-        return self.matrix[i, j]
+        return self.matrix[i, j] > 0
 
     def bulk_connect(self, i: int, js: np.ndarray) -> None:
-        self.matrix[i, js] = True
-        self.matrix[js, i] = True
+        self.matrix[i, js] = 1
+        self.matrix[js, i] = 1
 
     def b_get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
-        if left_set:
+        if left_set == True or left_set == BipartiteSet.left:
             return np.arange(0, self.size_left)
         else:
             return np.arange(0, self.size_right)
 
     def b_list(self, x: int, left_set: bool) -> np.ndarray:
         if left_set:
-            return np.where(self.matrix[x, :])[0] - self.size_left
+            return np.where(self.matrix[x, :] > 0)[0] - self.size_left
         else:
-            return np.where(self.matrix[x + self.size_left, :])[0]
+            return np.where(self.matrix[x + self.size_left, :] > 0)[0]
 
     def b_connected(self, left: int, right: int) -> bool:
-        return self.matrix[left, right + self.size_left]
+        return self.matrix[left, right + self.size_left] > 0
 
     def b_bulk_connect(self, left: int, rights: np.ndarray) -> None:
-        self.matrix[left, rights + self.size_left] = True
-        self.matrix[rights + self.size_left, left] = True
+        self.matrix[left, rights + self.size_left] = 1
+        self.matrix[rights + self.size_left, left] = 1
+
+    def w_list(self, i: int) -> np.ndarray:
+        idx = np.where(self.matrix[i, :] > 0)[0]
+        ws = self.matrix[i, idx]
+        r = np.hstack((idx.reshape(-1, 1), ws.reshape(-1, 1)))
+        return r
+
+    def w_connected(self, i: int, j: int) -> int:
+        return self.matrix[i, j]
+
+    def w_bulk_connect(self, i: int, js: np.ndarray) -> None:
+        self.matrix[i, js[:, 0]] = js[:, 1]
+        self.matrix[js[:, 0], i] = js[:, 1]
