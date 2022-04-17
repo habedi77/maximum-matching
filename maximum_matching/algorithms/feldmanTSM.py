@@ -33,5 +33,6 @@ class FeldmanTSM(AlgorithmBase):
     def runOnline():
         pass
 
-    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
-        pass
+    def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
+        print("Hello TSM!")
+        return (0, [0, 0])
