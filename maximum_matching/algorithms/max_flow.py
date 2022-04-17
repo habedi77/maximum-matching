@@ -116,10 +116,7 @@ class MaxFlow(AlgorithmBase):
 
     def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
         
-        result = self.prepare_graph(graph)
-        src = result[0]
-        sink = result[1]
-        n = result[2]
+        src, sink, n = self.prepare_graph(graph)
 
         count_matches = self.run_max_flow(src, sink, n)
 
