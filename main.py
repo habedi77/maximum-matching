@@ -7,6 +7,7 @@ import maximum_matching.utility as util
 
 _algorithms = [
     alg.Vazirani(),
+    alg.Oblivious()
 ]
 
 
