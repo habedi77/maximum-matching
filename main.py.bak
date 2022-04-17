@@ -11,10 +11,11 @@ PRINT_OUTPUT = True
 
 # List the algorithms you would like the program to run
 _algorithms = [
+<<<<<<< HEAD
     Vaz(),  # Vazirani (Online)
     Rand(),
-    MinDeg()
-   # alg.Oblivious()
+    MinDeg(),
+    alg.Oblivious()
 ]
 
 
