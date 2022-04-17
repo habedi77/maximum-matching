@@ -19,7 +19,7 @@ class FullMatrixGraph(GraphBase):
         if left_set:
             return np.arange(0, self.size_left)
         else:
-            return np.arange(self.size_left, self.size_right)
+            return np.arange(self.size_left, self.size_left + self.size_right)
 
     def list(self, i: int) -> np.ndarray:
         return np.where(self.matrix[i, :] > 0)[0]
