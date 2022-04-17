@@ -80,11 +80,10 @@ class MaxFlow(AlgorithmBase):
 
     def prepare_graph(self, graph: GraphBase, sourceSinkCap: int = 1) -> List:
 
-        left_side = graph.b_get_independent_set(BipartiteSet.left)
-        right_side = graph.b_get_independent_set(BipartiteSet.right)
+        left_side = graph.get_independent_set(BipartiteSet.left)
+        right_side = graph.get_independent_set(BipartiteSet.right)
 
-        total_nodes = len(left_side)
-        total_nodes += len(right_side)
+        total_nodes = graph.size + 1
         source_node = total_nodes
         total_nodes += 1
         sink_node = total_nodes
@@ -95,10 +94,10 @@ class MaxFlow(AlgorithmBase):
 
         # connecting left side nodes with the right side
         for u in left_side:
-            neighbours = graph.b_list(u, BipartiteSet.left)
-            for v in neighbours: 
+            neighbours = graph.list(u)
+            for v in neighbours:
                 self.make_edge(u, v, 1)
-        
+
         # connecting source_node with left side
         for x in left_side:
             u = source_node
@@ -120,4 +119,4 @@ class MaxFlow(AlgorithmBase):
 
         count_matches = self.run_max_flow(src, sink, n)
 
-        return (count_matches, [n - 2, count_matches])
+        return (count_matches, [graph.size, count_matches])
