@@ -123,3 +123,37 @@ class GraphBase(ABC):
         :return: None
         """
         self.bulk_connect(left, rights + self.size_left)
+
+    @abstractmethod
+    def w_list(self, i: int) -> np.ndarray:
+        """
+        get list of vertices connected to vertex i and their weights
+        returned array is a (n, 2) array where the first column is the vertex index and the second column is the weight
+
+        :param i: vertex index
+        :return: np.ndarray of vertex connected to i. First column in the index and the second column is the weight
+        """
+        pass
+
+    @abstractmethod
+    def w_connected(self, i: int, j: int) -> int:
+        """
+        Return the weight between vertices i and j. Returns 0 if they are not connected
+
+        :param i: vertex index
+        :param j: vertex index
+        :return: 0 if vertices i and j are not connected, Their weight otherwise
+        """
+        pass
+
+    @abstractmethod
+    def w_bulk_connect(self, i: int, js: np.ndarray) -> None:
+        """
+        Connect vertex i to js vertices with weight
+        js is a (n, 2) array where the first column is the vertex index and the second column is the weight
+
+        :param i: vertex index
+        :param js: array of vertex indices and their weights to connect to
+        :return: None
+        """
+        pass
