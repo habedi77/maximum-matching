@@ -45,9 +45,14 @@ class MaxFlow(AlgorithmBase):
 
 
     def run_max_flow(self, src: int, sink: int, n: int) -> int:
+        trends = []
+        visited_nodes_for_trends = set()
+
         max_flow = 0
         min_capacity = self.INF
         self.visited = [False] * n
+    
+        trends.append([max_flow, len(visited_nodes_for_trends)])
 
         while self.BFS(src, sink, n) is True:
 
@@ -64,9 +69,16 @@ class MaxFlow(AlgorithmBase):
 
             max_flow += min_capacity
             min_capacity = self.INF
+
+            for i in range(n):
+                if (self.visited[i] == True):
+                    visited_nodes_for_trends.add(i)
+
+            # Removing the extra two nodes (source and sink) from trends which are not part of the original graph
+            trends.append([max_flow, len(visited_nodes_for_trends) - 2])
             self.visited = [False] * n
 
-        return max_flow
+        return max_flow, trends
 
 
     def make_edge(self, u: int, v: int, cap: int):
@@ -117,6 +129,6 @@ class MaxFlow(AlgorithmBase):
         
         src, sink, n = self.prepare_graph(graph)
 
-        count_matches = self.run_max_flow(src, sink, n)
+        count_matches, trends = self.run_max_flow(src, sink, n)
 
-        return (count_matches, [graph.size, count_matches])
+        return (count_matches, trends)
