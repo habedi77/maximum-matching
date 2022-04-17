@@ -1,7 +1,8 @@
 from typing import List, Dict
 from tqdm import tqdm
 from maximum_matching.algorithms.Vazirani import Vaz
-from maximum_matching.algorithms.Blossom import Bloss
+from maximum_matching.algorithms.Rand import Rand
+from maximum_matching.algorithms.MinDegree import MinDeg
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
 
@@ -11,7 +12,8 @@ PRINT_OUTPUT = True
 # List the algorithms you would like the program to run
 _algorithms = [
     Vaz(),  # Vazirani (Online)
-    # (Not yet Complete) Bloss()  # Blossom algorithm (Optimal)
+    Rand(),
+    MinDeg()
 ]
 
 
@@ -31,7 +33,6 @@ def run_on_graph(graph: graphs.GraphBase, algorithms) -> List[Dict]:
 
         if PRINT_OUTPUT:
             print(matching_size)
-            print(trend)
             results.append({
                 "name": type(algr).__name__,
                 "matching_size": matching_size,

@@ -1,4 +1,3 @@
-import math
 from random import shuffle
 from typing import Tuple, Union, List
 
@@ -41,7 +40,7 @@ class Vaz(AlgorithmBase):
         girls = graph.get_independent_set(BipartiteSet.right)
 
         # Randomize the order of girl vertices
-        if Vazirani_Girl_Randomize:
+        if Online_Randomize:
             shuffle(girls)
 
         # Array of edges in our matching
