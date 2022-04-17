@@ -16,7 +16,7 @@ class FullMatrixGraph(GraphBase):
         self.matrix = np.zeros((self.size, self.size), dtype=int)
 
     def get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
-        if left_set:
+        if left_set == True or left_set == BipartiteSet.left:
             return np.arange(0, self.size_left)
         else:
             return np.arange(self.size_left, self.size_left + self.size_right)
@@ -32,7 +32,7 @@ class FullMatrixGraph(GraphBase):
         self.matrix[js, i] = 1
 
     def b_get_independent_set(self, left_set: Union[bool, BipartiteSet]) -> np.ndarray:
-        if left_set:
+        if left_set == True or left_set == BipartiteSet.left:
             return np.arange(0, self.size_left)
         else:
             return np.arange(0, self.size_right)

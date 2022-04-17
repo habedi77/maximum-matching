@@ -3,6 +3,8 @@ from tqdm import tqdm
 from maximum_matching.algorithms.Vazirani import Vaz
 from maximum_matching.algorithms.Rand import Rand
 from maximum_matching.algorithms.MinDegree import MinDeg
+import maximum_matching.algorithms as alg
+from maximum_matching.algorithms.feldmanTSM import FeldmanTSM
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
 
@@ -13,8 +15,10 @@ PRINT_OUTPUT = True
 _algorithms = [
     Vaz(),  # Vazirani (Online)
     Rand(),
-    MinDeg()
-   # alg.Oblivious()
+    MinDeg(),
+    alg.Oblivious(),
+    # alg.FeldmanTSM(),
+    alg.MaxFlow()
 ]
 
 
