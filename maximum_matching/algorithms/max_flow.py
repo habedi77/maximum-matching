@@ -51,7 +51,7 @@ class MaxFlow(AlgorithmBase):
         min_capacity = self.INF
         self.visited = [False] * n
 
-        trends.append([max_flow, len(visited_nodes_for_trends)])
+        trends.append([len(visited_nodes_for_trends), max_flow])
 
         while self.BFS(src, sink, n) is True:
 

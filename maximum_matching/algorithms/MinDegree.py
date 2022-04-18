@@ -47,18 +47,18 @@ class MinDeg(AlgorithmBase):
 
             # Match with the eligible of the minimum degree
             selected_match = []
-            selected_match_size = math.inf
+            selected_match_degree = math.inf
             for neigh in neighbours_of_vertex:
                 edge_test = create_edge(vertex, neigh)
 
                 # Discover minimum degree match
                 if is_valid_match(max_matching, edge_test):
-                    num_neigh = len(graph.list(neigh))
-                    if num_neigh < selected_match_size:
-                        selected_match = create_edge(vertex, neigh)
-                        selected_match_size = num_neigh
+                    degree = len(graph.list(neigh))
+                    if degree < selected_match_degree:
+                        selected_match = edge_test
+                        selected_match_degree = degree
 
-            if not math.isinf(selected_match_size) and len(selected_match) > 0:
+            if not math.isinf(selected_match_degree) and len(selected_match) > 0:
                 max_matching.append(selected_match)
 
             trend.append([len(left) + num_evaluated, len(max_matching)])
