@@ -2,6 +2,9 @@ from typing import List, Tuple, Union
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
+# For testing
+DISABLE_TRENDS = False
+
 class MaxFlow(AlgorithmBase):
     """
     Edmonds Karp algorithm implementation of the Maximum Flow problem
@@ -71,7 +74,6 @@ class MaxFlow(AlgorithmBase):
 
     def make_edge(self, u: int, v: int, cap: int):
         self.capacity[u][v] = cap
-        # self.capacity[v][u] = cap
 
         if self.vec[u] is None:
             self.vec[u] = []
@@ -94,15 +96,18 @@ class MaxFlow(AlgorithmBase):
         sink_node = total_nodes
         total_nodes += 1
 
-        # print("Tests: ", right_side[0])
-
         trends = []
         visited_nodes = graph.size_left
 
         trends.append([visited_nodes, 0])
         max_matches = 0
 
-        for right_idx in range(graph.size_right):
+        for right_idx in range(0, graph.size_right):
+
+            # generating for large input
+            if DISABLE_TRENDS: 
+                right_idx = graph.size_right - 1
+
             self.vec = [None] * total_nodes
             self.capacity = [ [0]*total_nodes for i in range(total_nodes)] 
 
@@ -132,11 +137,16 @@ class MaxFlow(AlgorithmBase):
 
             trends.append([visited_nodes, count_matches])
 
+            if DISABLE_TRENDS:
+                break
+
         # return (source_node, sink_node, total_nodes)
         return max_matches, trends
 
 
     def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
+
+        print("Running max flow...")
         
         # src, sink, n = self.prepare_graph(graph)
 
