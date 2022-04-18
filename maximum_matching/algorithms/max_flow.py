@@ -69,14 +69,18 @@ class MaxFlow(AlgorithmBase):
 
         return max_flow
 
-
     def make_edge(self, u: int, v: int, cap: int):
         self.capacity[u][v] = cap
+        # self.capacity[v][u] = cap
 
         if self.vec[u] is None:
             self.vec[u] = []
-        
+
+        if self.vec[v] is None:
+            self.vec[v] = []
+
         self.vec[u].append(v)
+        self.vec[v].append(u)
 
 
     def prepare_graph(self, graph: GraphBase, sourceSinkCap: int = 1) -> List:
