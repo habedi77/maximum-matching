@@ -45,14 +45,9 @@ class MaxFlow(AlgorithmBase):
 
 
     def run_max_flow(self, src: int, sink: int, n: int) -> int:
-        trends = []
-        visited_nodes_for_trends = set()
-
         max_flow = 0
         min_capacity = self.INF
         self.visited = [False] * n
-    
-        trends.append([max_flow, len(visited_nodes_for_trends)])
 
         while self.BFS(src, sink, n) is True:
 
@@ -70,15 +65,9 @@ class MaxFlow(AlgorithmBase):
             max_flow += min_capacity
             min_capacity = self.INF
 
-            for i in range(n):
-                if (self.visited[i] == True):
-                    visited_nodes_for_trends.add(i)
-
-            # Removing the extra two nodes (source and sink) from trends which are not part of the original graph
-            trends.append([max_flow, len(visited_nodes_for_trends) - 2])
             self.visited = [False] * n
 
-        return max_flow, trends
+        return max_flow
 
 
     def make_edge(self, u: int, v: int, cap: int):
@@ -101,34 +90,56 @@ class MaxFlow(AlgorithmBase):
         sink_node = total_nodes
         total_nodes += 1
 
-        self.capacity = [ [0]*total_nodes for i in range(total_nodes)] 
-        self.vec = [None] * total_nodes
+        # print("Tests: ", right_side[0])
 
-        # connecting left side nodes with the right side
-        for u in left_side:
-            neighbours = graph.list(u)
-            for v in neighbours:
-                self.make_edge(u, v, 1)
+        trends = []
+        visited_nodes = graph.size_left
 
-        # connecting source_node with left side
-        for x in left_side:
-            u = source_node
-            v = x
-            self.make_edge(u, v, sourceSinkCap)
+        trends.append([visited_nodes, 0])
+        max_matches = 0
 
-        # connecting right_side with sink_node
-        for x in right_side:
-            u = x
-            v = sink_node
-            self.make_edge(u, v, sourceSinkCap)
+        for right_idx in range(graph.size_right):
+            self.vec = [None] * total_nodes
+            self.capacity = [ [0]*total_nodes for i in range(total_nodes)] 
 
-        return (source_node, sink_node, total_nodes)
+            # connecting source_node with left side
+            for x in left_side:
+                u = source_node
+                v = x
+                self.make_edge(u, v, sourceSinkCap)
+
+            # connecting right_side with sink_node
+            for x in right_side:
+                u = x
+                v = sink_node
+                self.make_edge(u, v, sourceSinkCap)
+
+            for i in range(right_idx + 1):
+                v = right_side[i]
+                neighbours = graph.list(v)
+                for u in neighbours:
+                    self.make_edge(u, v, 1)
+
+            count_matches = self.run_max_flow(source_node, sink_node, total_nodes)
+
+            visited_nodes += 1
+
+            max_matches = max(max_matches, count_matches)
+
+            trends.append([visited_nodes, count_matches])
+
+        # return (source_node, sink_node, total_nodes)
+        return max_matches, trends
 
 
     def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
         
-        src, sink, n = self.prepare_graph(graph)
+        # src, sink, n = self.prepare_graph(graph)
 
-        count_matches, trends = self.run_max_flow(src, sink, n)
+        # count_matches, trends = self.run_max_flow(src, sink, n)
 
-        return (count_matches, trends)
+        max_matches, trends = self.prepare_graph(graph)
+
+        # print(trends)
+
+        return (max_matches, trends)
