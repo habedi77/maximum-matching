@@ -5,3 +5,4 @@ __pycache__/
 
 # VS Code Local Meta Data
 .DS_Store
+.vscode
