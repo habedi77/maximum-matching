@@ -42,16 +42,16 @@ class MinDeg(AlgorithmBase):
         for vertex in right:
             num_evaluated = num_evaluated + 1
 
-            # As each girl arrives, match her to the eligible boy of the highest rank
+            # Check neighbours of arriving vertex
             neighbours_of_vertex = graph.list(vertex)
 
-            # Check neighbours. Match with the eligible boy (if any) of the highest rank
+            # Match with the eligible of the minimum degree
             selected_match = []
             selected_match_size = math.inf
             for neigh in neighbours_of_vertex:
                 edge_test = create_edge(vertex, neigh)
 
-                # Discover the match with the minimum degree
+                # Discover minimum degree match
                 if is_valid_match(max_matching, edge_test):
                     num_neigh = len(graph.list(neigh))
                     if num_neigh < selected_match_size:
@@ -60,6 +60,7 @@ class MinDeg(AlgorithmBase):
 
             if not math.isinf(selected_match_size) and len(selected_match) > 0:
                 max_matching.append(selected_match)
-                trend.append([len(left) + num_evaluated, len(max_matching)])
+
+            trend.append([len(left) + num_evaluated, len(max_matching)])
 
         return [len(max_matching), trend]

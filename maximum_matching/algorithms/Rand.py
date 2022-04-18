@@ -55,8 +55,8 @@ class Rand(AlgorithmBase):
             # Select a random edge from the possible choices
             if len(valid_matches) > 0:
                 max_matching.append(valid_matches[random.randrange(0, len(valid_matches))])
-                trend.append([len(left) + num_evaluated, len(max_matching)])
 
+            trend.append([len(left) + num_evaluated, len(max_matching)])
             valid_matches.clear()
 
         return [len(max_matching), trend]

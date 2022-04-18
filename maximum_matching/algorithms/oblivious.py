@@ -59,4 +59,4 @@ class Oblivious(AlgorithmBase):
             trends.append([visited_vertices, count_matches])
         
         print("Finished running Oblivious")
-        return (count_matches, trends)
+        return count_matches, trends

@@ -72,8 +72,8 @@ class Vaz(AlgorithmBase):
             # Use the edge to the highest ranked eligible boy
             if len(highest_rank) > 0:
                 max_matching.append(highest_rank[0])
-                trend.append([len(boys) + num_girls_evaluated, len(max_matching)])
 
+            trend.append([len(boys) + num_girls_evaluated, len(max_matching)])
             valid_matches.clear()
 
         return [len(max_matching), trend]
