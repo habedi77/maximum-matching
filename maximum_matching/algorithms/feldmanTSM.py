@@ -1,7 +1,7 @@
 from typing import List, Tuple, Union
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.algorithms.max_flow import MaxFlow
-from maximum_matching.graphs.graph_base import GraphBase
+from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
 
 class FeldmanTSM(AlgorithmBase):
@@ -25,31 +25,139 @@ class FeldmanTSM(AlgorithmBase):
         Otherwise, ignore.
     """
 
-    def runMaxFlow(self, historicGraph: GraphBase):
+    def runMaxFlow(self, historicGraph: GraphBase) -> List:
 
         maxFlow = MaxFlow()
         src, sink, n = maxFlow.prepare_graph(historicGraph, sourceSinkCap=2)
-        count_matches = maxFlow.run_max_flow(src, sink, n)
+        maxFlow.run_max_flow(src, sink, n)
+
+        vec = [None] * historicGraph.size
 
         # Find the edges from A to B of non-zero (must be unit) flow.
-        for u in range(n):
-            for v in range(n):
+        for u in historicGraph.get_independent_set(BipartiteSet.left):
+            for v in historicGraph.list(u):
                 if (u == src or u == sink or v == src or v == sink): continue
 
-                if maxFlow.capacity[u][v] == 1:
-                    print("Found {} to {}".format(u, v))
+                if maxFlow.capacity[u][v] == 0: # capacity zero means flow is 1
+                    # print("Found {} to {}".format(u, v))
+                    if vec[u] is None:
+                        vec[u] = []
+
+                    if vec[v] is None:
+                        vec[v] = []
+                    
+                    vec[u].append(v)
+                    vec[v].append(u)
+
                 elif maxFlow.capacity[u][v] > 1:
                     raise ValueError('Capacity should not be more than 1!')
 
-        pass
+        return vec
 
-    def runRedBlue():
-        pass
+    def runRedBlue(self, left_size: int, vec: List, total_size: int):
+        red = [-1] * left_size
+        blue = [-1] * left_size
+        pred = [-1] * total_size
+
+        for i in range(left_size):
+            if vec[i] is None:
+                vec[i] = []
+
+        for i in range(left_size):
+            if pred[i] == -1 and len(vec[i]) != 0:
+                cur = vec[i][0]
+                pred[cur] = i
+                cur_len = 2
+                
+                while len(vec[cur]) == 2 and cur != i:
+                    next = -1
+                    if vec[cur][0] == pred[cur]:
+                        next = vec[cur][1]
+                    else:
+                        next = vec[cur][0]
+                    
+                    pred[next] = cur
+                    cur = next
+                    cur_len += 1
+                
+                if cur == i: #cycle
+                    st = i
+                    blue[st] = pred[st]
+                    red[pred[pred[st]]] = pred[st]
+                    st = pred[pred[st]]
+
+                    while st != i:
+                        blue[st] = pred[st]
+                        red[pred[pred[st]]] = pred[st]
+                        st = pred[pred[st]]
+                else:
+                    #go down the other branch
+                    if len(vec[i]) == 2:
+                        prev = i
+                        ncur = vec[i][1]
+                        pred[prev] = ncur
+                        cur_len += 1
+
+                        while (len(vec[ncur]) == 2):
+                            next = -1
+                            if vec[ncur][0] == prev:
+                                next = vec[ncur][1]
+                            else:
+                                next = vec[ncur][0]
+                            pred[ncur] = next
+                            prev = ncur
+                            ncur = next
+                            cur_len += 1
+                        
+                        pred[ncur] = ncur
+                    else:
+                        pred[i] = i
+
+                    if cur_len % 2 == 0: #number of nodes on the path is even, i.e. length is odd
+                        if cur >= left_size:
+                            blue[pred[cur]] = cur
+                            st = pred[cur]
+                            while pred[st] != st:
+                                red[st] = pred[st]
+                                blue[pred[pred[st]]] = pred[st]
+                                st = pred[pred[st]]
+                        
+                        else:
+                            blue[cur] = pred[cur]
+                            st = pred[cur]
+                            while (pred[st] != st):
+                                red[pred[st]] = st
+                                blue[pred[st]] = pred[pred[st]]
+                                st = pred[pred[st]]
+                    else:
+                        if cur >= left_size:
+                            st = cur
+
+                            blue[pred[st]] = st
+                            red[pred[st]] = pred[pred[st]]
+                            st = pred[pred[st]]
+
+                            while pred[st] != st:
+                                blue[pred[st]] = st
+                                red[pred[st]] = pred[pred[st]]
+                                st = pred[pred[st]]
+                        else:
+                            st = cur
+                            blue[st] = pred[st]
+                            blue[pred[pred[st]]] = pred[st]
+                            st = pred[pred[st]]
+                            while (pred[st] != st):
+                                red[st] = pred[st]
+                                blue[pred[pred[st]]] = pred[st]
+                                st = pred[pred[st]]
+
+        print("Red: ", red)
+        print("Blue: ", blue)
 
     def runOnline():
         pass
 
     def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
-        # print("Hello TSM!")
-        self.runMaxFlow(historicGraph=historicGraph)
+        vec = self.runMaxFlow(historicGraph=historicGraph)
+        self.runRedBlue(historicGraph.size_left, vec, historicGraph.size)
         return (0, [0, 0])
