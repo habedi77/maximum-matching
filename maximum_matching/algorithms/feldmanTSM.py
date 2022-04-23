@@ -157,38 +157,37 @@ class FeldmanTSM(AlgorithmBase):
 
     def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
         vec = self.runMaxFlow(historicGraph=historicGraph)
-        (red, blue) = self.runRedBlue(historicGraph.size_left, vec, historicGraph.size)
-        types = self.get_type(historicGraph.size_left)
+        (red, blue) = self.runRedBlue(historicGraph.size_right, vec, historicGraph.size)
+        types = self.get_type(historicGraph.size_right)
 
         matching_count = 0
         trends = []
         visited_nodes = 0
 
-        visited_nodes += graph.size_right
+        visited_nodes += graph.size_left
         trends.append([visited_nodes, matching_count])
 
-        result = [-1] * historicGraph.size_left
+        result = [-1] * historicGraph.size_right
         offline = [-1] * historicGraph.size
-        count = [0] * historicGraph.size_left
+        count = [0] * historicGraph.size_right
 
-        # TODO: Handle the online nodes, update trends and update the comments
-        for i in range(0, len(types)):
+        # TODO: Handle the online edge cases and update the comments
+        for i in graph.b_get_independent_set(BipartiteSet.right):
+            visited_nodes += 1
             count[types[i]] += 1
             if count[types[i]] == 1 and blue[types[i]] != -1 and offline[blue[types[i]]] == -1:
-                if (result[i] == -1):
+                if (result[i] == -1 and matching_count < min(graph.size_left, graph.size_right)):
                     matching_count += 1
 
                 result[i] = blue[types[i]]
                 offline[blue[types[i]]] = i
             elif count[types[i]] == 2 and red[types[i]] != -1 and offline[red[types[i]]] == -1:
-                if (result[i] == -1):
+                if (result[i] == -1 and matching_count < min(graph.size_left, graph.size_right)):
                     matching_count += 1
 
                 result[i] = red[types[i]]
                 offline[red[types[i]]] = i
+        
+            trends.append([visited_nodes, matching_count])
 
-        for i in graph.get_independent_set(BipartiteSet.left):
-            if (result[i] != -1 and matching_count < min(graph.size_left, graph.size_right)):
-                    matching_count += 1
-
-        return (matching_count, [[0, 0]])
+        return (matching_count, trends)
