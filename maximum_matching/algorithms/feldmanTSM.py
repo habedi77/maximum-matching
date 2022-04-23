@@ -172,17 +172,19 @@ class FeldmanTSM(AlgorithmBase):
         count = [0] * historicGraph.size_right
 
         # TODO: Handle the online edge cases and update the comments
+        maxFlow = MaxFlow()
+        res = maxFlow.find_max_bipartite(graph, True, sourceSinkCap=1)
         for i in graph.b_get_independent_set(BipartiteSet.right):
             visited_nodes += 1
             count[types[i]] += 1
             if count[types[i]] == 1 and blue[types[i]] != -1 and offline[blue[types[i]]] == -1:
-                if (result[i] == -1 and matching_count < min(graph.size_left, graph.size_right)):
+                if (result[i] == -1 and matching_count < res[0]):
                     matching_count += 1
 
                 result[i] = blue[types[i]]
                 offline[blue[types[i]]] = i
             elif count[types[i]] == 2 and red[types[i]] != -1 and offline[red[types[i]]] == -1:
-                if (result[i] == -1 and matching_count < min(graph.size_left, graph.size_right)):
+                if (result[i] == -1 and matching_count < res[0]):
                     matching_count += 1
 
                 result[i] = red[types[i]]
