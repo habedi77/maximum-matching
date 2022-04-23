@@ -1,4 +1,4 @@
-from typing import TypeVar, Type
+from typing import Tuple, TypeVar, Type
 
 import numpy as np
 from abc import ABC, abstractmethod
@@ -17,7 +17,7 @@ class GeneratorBase(ABC):
     """
 
     @abstractmethod
-    def generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, **kwargs) -> G:
+    def generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, **kwargs) -> Tuple[G, G]:
         """
         Generate a type of bipartite graphs
 

@@ -7,7 +7,6 @@ import pandas as pd
 
 def write_results(result):
     array = []
-    print(result)
 
     # Formatting the results for the xls file
     for i in result[0]:

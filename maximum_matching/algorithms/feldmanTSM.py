@@ -1,4 +1,6 @@
 from typing import List, Tuple, Union
+
+import numpy as np
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.algorithms.max_flow import MaxFlow
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
@@ -28,18 +30,15 @@ class FeldmanTSM(AlgorithmBase):
     def runMaxFlow(self, historicGraph: GraphBase) -> List:
 
         maxFlow = MaxFlow()
-        src, sink, n = maxFlow.prepare_graph(historicGraph, sourceSinkCap=2)
-        maxFlow.run_max_flow(src, sink, n)
+        maxFlow.find_max_bipartite(historicGraph, True, sourceSinkCap=2)
 
         vec = [None] * historicGraph.size
 
         # Find the edges from A to B of non-zero (must be unit) flow.
         for u in historicGraph.get_independent_set(BipartiteSet.left):
             for v in historicGraph.list(u):
-                if (u == src or u == sink or v == src or v == sink): continue
 
                 if maxFlow.capacity[u][v] == 0: # capacity zero means flow is 1
-                    # print("Found {} to {}".format(u, v))
                     if vec[u] is None:
                         vec[u] = []
 
@@ -54,7 +53,7 @@ class FeldmanTSM(AlgorithmBase):
 
         return vec
 
-    def runRedBlue(self, left_size: int, vec: List, total_size: int):
+    def runRedBlue(self, left_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
         red = [-1] * left_size
         blue = [-1] * left_size
         pred = [-1] * total_size
@@ -63,7 +62,7 @@ class FeldmanTSM(AlgorithmBase):
             if vec[i] is None:
                 vec[i] = []
 
-        for i in range(left_size):
+        for i in range(0, left_size):
             if pred[i] == -1 and len(vec[i]) != 0:
                 cur = vec[i][0]
                 pred[cur] = i
@@ -151,13 +150,45 @@ class FeldmanTSM(AlgorithmBase):
                                 blue[pred[pred[st]]] = pred[st]
                                 st = pred[pred[st]]
 
-        print("Red: ", red)
-        print("Blue: ", blue)
+        return (red, blue)
 
-    def runOnline():
-        pass
+    def get_type(self, size: int) -> List[int]:
+        return np.random.randint(low=0, high=size, size=size)
 
     def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
         vec = self.runMaxFlow(historicGraph=historicGraph)
-        self.runRedBlue(historicGraph.size_left, vec, historicGraph.size)
-        return (0, [0, 0])
+        (red, blue) = self.runRedBlue(historicGraph.size_left, vec, historicGraph.size)
+        types = self.get_type(historicGraph.size_left)
+
+        matching_count = 0
+        trends = []
+        visited_nodes = 0
+
+        visited_nodes += graph.size_right
+        trends.append([visited_nodes, matching_count])
+
+        result = [-1] * historicGraph.size_left
+        offline = [-1] * historicGraph.size
+        count = [0] * historicGraph.size_left
+
+        # TODO: Handle the online nodes, update trends and update the comments
+        for i in range(0, len(types)):
+            count[types[i]] += 1
+            if count[types[i]] == 1 and blue[types[i]] != -1 and offline[blue[types[i]]] == -1:
+                if (result[i] == -1):
+                    matching_count += 1
+
+                result[i] = blue[types[i]]
+                offline[blue[types[i]]] = i
+            elif count[types[i]] == 2 and red[types[i]] != -1 and offline[red[types[i]]] == -1:
+                if (result[i] == -1):
+                    matching_count += 1
+
+                result[i] = red[types[i]]
+                offline[red[types[i]]] = i
+
+        for i in graph.get_independent_set(BipartiteSet.left):
+            if (result[i] != -1 and matching_count < min(graph.size_left, graph.size_right)):
+                    matching_count += 1
+
+        return (matching_count, [[0, 0]])
