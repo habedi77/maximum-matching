@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from .gaussian_generator import GaussianGenerator
+from .density_generator import DensityGenerator
 
 
 def load_tests_csv(file="tests.csv") -> pd.DataFrame:
@@ -11,7 +12,8 @@ def load_tests_csv(file="tests.csv") -> pd.DataFrame:
     """
     replace_dict = {
         np.nan: None,
-        "gaussian": GaussianGenerator()
+        "gaussian": GaussianGenerator(),
+        "density": DensityGenerator(),
     }
 
     df = pd.read_csv(file, index_col="id")
