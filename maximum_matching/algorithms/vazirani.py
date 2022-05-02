@@ -22,6 +22,7 @@ class Vaz(AlgorithmBase):
     Or in other words, boys and girls are two disjoint sets defined in a bipartite graph
     Return the maximum_matching. Or well, the 'estimated' best matching.
     """
+
     def run(self, graph) -> Tuple[int, Union[List, None]]:
         # Assumption: Boys arrive first [left = boys, right = girls]
         boys = graph.get_independent_set(BipartiteSet.left)
@@ -37,7 +38,7 @@ class Vaz(AlgorithmBase):
         # Complete when there are no more vertices
         # Get the next vertex from the girls set
 
-        print("running Vazirani ... ")
+        # print("running Vazirani ... ")
 
         girls = graph.get_independent_set(BipartiteSet.right)
 

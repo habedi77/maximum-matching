@@ -5,6 +5,7 @@ from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 # For testing
 DISABLE_TRENDS = False
 
+
 class MaxFlow(AlgorithmBase):
     """
     Edmonds Karp algorithm implementation of the Maximum Flow problem
@@ -12,12 +13,11 @@ class MaxFlow(AlgorithmBase):
 
     INF = 1000000009
 
-    vec = [] # graph on which the max flow will run
+    vec = []  # graph on which the max flow will run
     visited = []
-    capacity = [] # 2D array for capacity
+    capacity = []  # 2D array for capacity
 
     bfs_path = []
-
 
     def BFS(self, start: int, endd: int, n: int) -> bool:
         self.bfs_path = [-1] * n
@@ -45,7 +45,6 @@ class MaxFlow(AlgorithmBase):
             que.pop(0)
 
         return found
-
 
     def run_max_flow(self, src: int, sink: int, n: int) -> int:
         max_flow = 0
@@ -86,7 +85,6 @@ class MaxFlow(AlgorithmBase):
         self.vec[u].append(v)
         self.vec[v].append(u)
 
-
     def find_max_bipartite(self, graph: GraphBase, disable_trends: bool, sourceSinkCap: int = 1) -> List:
 
         left_side = graph.get_independent_set(BipartiteSet.left)
@@ -107,11 +105,11 @@ class MaxFlow(AlgorithmBase):
         for right_idx in range(0, graph.size_right):
 
             # generating for large input
-            if disable_trends: 
+            if disable_trends:
                 right_idx = graph.size_right - 1
 
             self.vec = [None] * total_nodes
-            self.capacity = [ [0]*total_nodes for i in range(total_nodes)] 
+            self.capacity = [[0] * total_nodes for i in range(total_nodes)]
 
             # connecting source_node with left side
             for x in left_side:
@@ -144,10 +142,9 @@ class MaxFlow(AlgorithmBase):
 
         return max_matches, trends
 
-
     def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
 
-        print("Running max flow...")
+        # print("Running max flow...")
 
         max_matches, trends = self.find_max_bipartite(graph, DISABLE_TRENDS)
 

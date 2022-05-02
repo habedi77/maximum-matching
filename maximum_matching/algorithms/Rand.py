@@ -25,7 +25,7 @@ class Rand(AlgorithmBase):
             print("One of the disjoint sets are empty.")
             exit(0)
 
-        print("running Randomized online algorithm ... ")
+        # print("running Randomized online algorithm ... ")
 
         right = graph.get_independent_set(BipartiteSet.right)
 

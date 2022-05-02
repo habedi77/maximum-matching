@@ -27,7 +27,7 @@ class Oblivious(AlgorithmBase):
 
         np.random.seed(0)
         
-        print("Started running Oblivious")
+        # print("Started running Oblivious")
 
         known_nodes = graph.b_get_independent_set(BipartiteSet.left)
         unknown_nodes = graph.b_get_independent_set(BipartiteSet.right)
@@ -58,5 +58,5 @@ class Oblivious(AlgorithmBase):
 
             trends.append([visited_vertices, count_matches])
         
-        print("Finished running Oblivious")
+        # print("Finished running Oblivious")
         return count_matches, trends
