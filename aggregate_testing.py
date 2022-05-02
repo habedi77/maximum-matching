@@ -25,19 +25,25 @@ _algorithms = [
 ]
 
 
-def run_on_graph(graph: graphs.GraphBase, algorithms, seed) -> List[Dict]:
+def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorithms, seed) -> List[Dict]:
     """
     Runts tests with a list on algorithms on a given graph
 
     :param graph: the populated graph to test on
+    :param hist_graph: historic graph for FTSM algorithm
     :param algorithms: list on algorithms to run
+    :param seed: seed to note in results
     :return: a list of dictionary with the results of each algorithm
     """
 
     results = []
 
-    for algr in tqdm(algorithms, desc="Algorithms", position=1, ncols=80, ascii=True, leave=False):
-        matching_size, trend = algr.run(graph=graph)
+    for algr in tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False):
+
+        if isinstance(algr, type(alg.FeldmanTSM())):
+            matching_size, trend = algr.run(graph=graph, historicGraph=hist_graph)
+        else:
+            matching_size, trend = algr.run(graph=graph)
 
         if PRINT_OUTPUT:
             print(matching_size)
@@ -59,8 +65,10 @@ if __name__ == "__main__":
 
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Test item", position=0, ncols=80, ascii=True):
         for seed in tqdm(range(t["repeats"]), desc="Iter", position=1, ncols=80, ascii=True):
-            g: graphs.GraphBase = t["generator"].generate(graph_class=graphs.FullMatrixGraph, seed=seed, **t.to_dict())
-            result.append(run_on_graph(g, algorithms=_algorithms, seed=seed))
+            actual_g, hist_g = t["generator"].generate(
+                graph_class=graphs.FullMatrixGraph, seed=seed, **t.to_dict())
+
+            result.append(run_on_graph(actual_g, hist_g, algorithms=_algorithms, seed=seed))
 
         pass
     # TODO result writing
