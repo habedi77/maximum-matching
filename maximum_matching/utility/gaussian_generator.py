@@ -5,12 +5,6 @@ from .generator_base import GeneratorBase, G
 
 class GaussianGenerator(GeneratorBase):
 
-    def get_values_from_kwargs(self, key: str, kwargs):
-        assert key in kwargs
-        value = kwargs[key]
-        assert type(value) == float or type(value) == int
-        return value
-
     def gen_graph(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, mean: int, std: int):
         np.random.seed(seed)
 
@@ -44,14 +38,18 @@ class GaussianGenerator(GeneratorBase):
         :return: the same BaseBipartiteGraph instance provided
         """
 
-        mean = self.get_values_from_kwargs('mean', kwargs)
-        std = self.get_values_from_kwargs('std', kwargs)
-        hist_mean = self.get_values_from_kwargs('hist_mean', kwargs)
-        hist_std = self.get_values_from_kwargs('hist_std', kwargs)
-        hist_seed = self.get_values_from_kwargs('hist_seed', kwargs)
-        hist_multiply = self.get_values_from_kwargs('hist_multiply', kwargs)
+        mean = self.get_kwargs_val('mean', kwargs)
+        std = self.get_kwargs_val('std', kwargs)
+        hist_mean = self.get_kwargs_val('hist_mean', kwargs)
+        hist_std = self.get_kwargs_val('hist_std', kwargs)
+        hist_seed = self.get_kwargs_val('hist_seed', kwargs)
+        hist_multiply = self.get_kwargs_val('hist_multiply', kwargs)
 
         actual_graph = self.gen_graph(size_left, size_right, graph_class, seed, mean, std)
-        hist_graph = self.gen_graph(size_left * hist_multiply, size_right * hist_multiply, graph_class, hist_seed, hist_mean, hist_std)
 
-        return (actual_graph, hist_graph)
+        hist_graph = self.gen_graph(size_left * hist_multiply,
+                                    size_right * hist_multiply,
+                                    graph_class, hist_seed,
+                                    hist_mean, hist_std)
+
+        return actual_graph, hist_graph
