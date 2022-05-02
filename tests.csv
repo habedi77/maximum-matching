@@ -1,2 +1,2 @@
 id,size_left,size_right,seed,generator,mean,std
-0,300,300,0,gaussian,15,8
+0,300,300,0,gaussian,30,20
