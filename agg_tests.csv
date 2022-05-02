@@ -1,0 +1,2 @@
+id,size_left,size_right,repeats,generator,mean,std,density
+0,300,300,100,gaussian,30,20,0
