@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from tqdm import tqdm
 
 from maximum_matching.algorithms.Matching import is_valid_match
@@ -21,12 +21,12 @@ _algorithms = [
     Rand(),
     MinDeg(),
     alg.Oblivious(),
-    # alg.FeldmanTSM(),
+    alg.FeldmanTSM(),
     alg.MaxFlow()
 ]
 
 
-def run_on_graph(graph: graphs.GraphBase, algorithms) -> List[Dict]:
+def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorithms) -> List[Dict]:
     """
     Runts tests with a list on algorithms on a given graph
 
@@ -38,7 +38,13 @@ def run_on_graph(graph: graphs.GraphBase, algorithms) -> List[Dict]:
     results = []
 
     for algr in tqdm(algorithms, desc="Algorithms", position=1, ncols=80, ascii=True, leave=False):
-        matching_size, trend = algr.run(graph=graph)
+
+        matching_size, trend = None, None
+
+        if (type(algr) == type(alg.FeldmanTSM())):
+            matching_size, trend = algr.run(graph=graph, historicGraph = hist_graph)
+        else:
+            matching_size, trend = algr.run(graph=graph)
 
         if PRINT_OUTPUT:
             print(matching_size)
@@ -58,9 +64,9 @@ if __name__ == "__main__":
     result = []
 
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Tests", position=0, ncols=80, ascii=True):
-        g: graphs.GraphBase = t["generator"].generate(graph_class=graphs.FullMatrixGraph, **t.to_dict())
+        (actual_graph, hist_graph) = t["generator"].generate(graph_class=graphs.FullMatrixGraph, **t.to_dict())
 
-        result.append(run_on_graph(g, _algorithms))
+        result.append(run_on_graph(actual_graph, hist_graph, _algorithms))
 
         pass
 
