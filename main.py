@@ -11,7 +11,6 @@ import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
 from maximum_matching.utility.result_printer import write_results
 
-
 # For testing
 PRINT_OUTPUT = False
 
@@ -31,6 +30,7 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
     Runts tests with a list on algorithms on a given graph
 
     :param graph: the populated graph to test on
+    :param hist_graph: historic graph for FTSM algorithm
     :param algorithms: list on algorithms to run
     :return: a list of dictionary with the results of each algorithm
     """
@@ -41,8 +41,8 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
 
         matching_size, trend = None, None
 
-        if (type(algr) == type(alg.FeldmanTSM())):
-            matching_size, trend = algr.run(graph=graph, historicGraph = hist_graph)
+        if isinstance(algr, type(alg.FeldmanTSM())):
+            matching_size, trend = algr.run(graph=graph, historicGraph=hist_graph)
         else:
             matching_size, trend = algr.run(graph=graph)
 
@@ -64,9 +64,9 @@ if __name__ == "__main__":
     result = []
 
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Tests", position=0, ncols=80, ascii=True):
-        (actual_graph, hist_graph) = t["generator"].generate(graph_class=graphs.FullMatrixGraph, **t.to_dict())
+        actual_g, hist_g = t["generator"].generate(graph_class=graphs.FullMatrixGraph, **t.to_dict())
 
-        result.append(run_on_graph(actual_graph, hist_graph, _algorithms))
+        result.append(run_on_graph(actual_g, hist_g, _algorithms))
 
         pass
 
