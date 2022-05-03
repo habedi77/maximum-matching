@@ -13,25 +13,25 @@ class MaxFlow(AlgorithmBase):
 
     INF = 1000000009
 
-    vec = []  # graph on which the max flow will run
-    visited = []
-    capacity = []  # 2D array for capacity
+    def __init__(self) -> None:
+        super().__init__()
+        self.vec = []  # graph on which the max flow will run
+        self.visited = []
+        self.capacity = []  # 2D array for capacity
+        self.bfs_path = []
 
-    bfs_path = []
-
-    def BFS(self, start: int, endd: int, n: int) -> bool:
+    def bfs(self, start: int, endd: int, n: int) -> bool:
         self.bfs_path = [-1] * n
-        que = []
-        que.append(start)
+        que = [start]
         self.visited[start] = True
 
         found = False
-        while (len(que) > 0 and found == False):
+        while len(que) > 0 and not found:
             u = que[0]
 
-            if found == False and self.vec[u] is not None:
+            if not found and self.vec[u] is not None:
                 for v in self.vec[u]:
-                    if self.visited[v] == False and self.capacity[u][v] > 0:
+                    if not self.visited[v] and self.capacity[u][v] > 0:
                         que.append(v)
                         self.visited[v] = True
                         self.bfs_path[v] = u
@@ -39,7 +39,7 @@ class MaxFlow(AlgorithmBase):
                         if v == endd:
                             found = True
 
-                    if found == True:
+                    if found:
                         break
 
             que.pop(0)
@@ -51,7 +51,7 @@ class MaxFlow(AlgorithmBase):
         min_capacity = self.INF
         self.visited = [False] * n
 
-        while self.BFS(src, sink, n) is True:
+        while self.bfs(src, sink, n) is True:
 
             x = sink
             while x != src:
@@ -83,7 +83,8 @@ class MaxFlow(AlgorithmBase):
         self.vec[u].append(v)
         self.vec[v].append(u)
 
-    def find_max_bipartite(self, graph: GraphBase, disable_trends: bool, sourceSinkCap: int = 1) -> List:
+    def find_max_bipartite(self, graph: GraphBase, disable_trends: bool, sourceSinkCap: int = 1) -> \
+            Tuple[int, Union[List, None]]:
 
         left_side = graph.get_independent_set(BipartiteSet.left)
         right_side = graph.get_independent_set(BipartiteSet.right)
