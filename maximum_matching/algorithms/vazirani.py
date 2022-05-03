@@ -23,7 +23,7 @@ class Vaz(AlgorithmBase):
     Return the maximum_matching. Or well, the 'estimated' best matching.
     """
 
-    def run(self, graph) -> Tuple[int, Union[List, None]]:
+    def run(self, graph, **kwargs) -> Tuple[int, Union[List, None]]:
         # Assumption: Boys arrive first [left = boys, right = girls]
         boys = graph.get_independent_set(BipartiteSet.left)
 

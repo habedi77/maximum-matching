@@ -17,7 +17,7 @@ class Oblivious(AlgorithmBase):
     so an attempted match to an already matched known_nodes means that unknown_node j is dropped.
     """
     
-    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
         """
         Run Oblivious algorithm
 

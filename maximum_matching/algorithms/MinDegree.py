@@ -17,7 +17,7 @@ class MinDeg(AlgorithmBase):
     Minimum_Degree online bipartite algorithm
     As a vertex arrives, match to a neighbour with the minimum degree
     """
-    def run(self, graph) -> Tuple[int, Union[List, None]]:
+    def run(self, graph, **kwargs) -> Tuple[int, Union[List, None]]:
         # Assumption: left arrive first [left, right = the bipartite graph G = {L, R, E}]
         left = graph.get_independent_set(BipartiteSet.left)
 

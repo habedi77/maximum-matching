@@ -141,7 +141,7 @@ class MaxFlow(AlgorithmBase):
 
         return max_matches, trends
 
-    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
 
         # print("Running max flow...")
 

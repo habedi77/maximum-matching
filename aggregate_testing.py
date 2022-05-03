@@ -33,14 +33,12 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
 
     results = []
     tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
+    kwarg = {"historic_graph": hist_graph}
 
     for alg in tqdm_inst:
         tqdm_inst.set_postfix_str(type(alg).__name__)
 
-        if isinstance(alg, FeldmanTSM):
-            matching_size, trend = alg.run(graph=graph, historicGraph=hist_graph)
-        else:
-            matching_size, trend = alg.run(graph=graph)
+        matching_size, trend = alg.run(graph=graph, **kwarg)
 
         if PRINT_OUTPUT:
             print(matching_size)

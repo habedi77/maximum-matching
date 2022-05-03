@@ -14,12 +14,12 @@ class AlgorithmBase(ABC):
         pass
 
     @abstractmethod
-    def run(self, graph) -> Tuple[int, Union[List, None]]:
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
         """
         Run the matching algorithm on the given graph
 
-        :param algorithm:
         :param graph: a graph instance from the BaseBipartiteGraph abstract
+        :param kwargs: additional arguments if needed
         :return: the final matching size with a list of matching size trend for online algorithms
         """
 

@@ -38,13 +38,13 @@ class FeldmanTSM(AlgorithmBase):
         for u in historicGraph.get_independent_set(BipartiteSet.left):
             for v in historicGraph.list(u):
 
-                if maxFlow.capacity[u][v] == 0: # capacity zero means flow is 1
+                if maxFlow.capacity[u][v] == 0:  # capacity zero means flow is 1
                     if vec[u] is None:
                         vec[u] = []
 
                     if vec[v] is None:
                         vec[v] = []
-                    
+
                     vec[u].append(v)
                     vec[v].append(u)
 
@@ -67,19 +67,19 @@ class FeldmanTSM(AlgorithmBase):
                 cur = vec[i][0]
                 pred[cur] = i
                 cur_len = 2
-                
+
                 while len(vec[cur]) == 2 and cur != i:
                     next = -1
                     if vec[cur][0] == pred[cur]:
                         next = vec[cur][1]
                     else:
                         next = vec[cur][0]
-                    
+
                     pred[next] = cur
                     cur = next
                     cur_len += 1
-                
-                if cur == i: #cycle
+
+                if cur == i:  # cycle
                     st = i
                     blue[st] = pred[st]
                     red[pred[pred[st]]] = pred[st]
@@ -90,7 +90,7 @@ class FeldmanTSM(AlgorithmBase):
                         red[pred[pred[st]]] = pred[st]
                         st = pred[pred[st]]
                 else:
-                    #go down the other branch
+                    # go down the other branch
                     if len(vec[i]) == 2:
                         prev = i
                         ncur = vec[i][1]
@@ -107,12 +107,12 @@ class FeldmanTSM(AlgorithmBase):
                             prev = ncur
                             ncur = next
                             cur_len += 1
-                        
+
                         pred[ncur] = ncur
                     else:
                         pred[i] = i
 
-                    if cur_len % 2 == 0: #number of nodes on the path is even, i.e. length is odd
+                    if cur_len % 2 == 0:  # number of nodes on the path is even, i.e. length is odd
                         if cur >= left_size:
                             blue[pred[cur]] = cur
                             st = pred[cur]
@@ -120,7 +120,7 @@ class FeldmanTSM(AlgorithmBase):
                                 red[st] = pred[st]
                                 blue[pred[pred[st]]] = pred[st]
                                 st = pred[pred[st]]
-                        
+
                         else:
                             blue[cur] = pred[cur]
                             st = pred[cur]
@@ -155,10 +155,14 @@ class FeldmanTSM(AlgorithmBase):
     def get_type(self, size: int) -> List[int]:
         return np.random.randint(low=0, high=size, size=size)
 
-    def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
-        vec = self.runMaxFlow(historicGraph=historicGraph)
-        (red, blue) = self.runRedBlue(historicGraph.size_right, vec, historicGraph.size)
-        types = self.get_type(historicGraph.size_right)
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
+        assert "historic_graph" in kwargs
+        historic_graph = kwargs["historic_graph"]
+        assert isinstance(historic_graph, GraphBase)
+
+        vec = self.runMaxFlow(historicGraph=historic_graph)
+        (red, blue) = self.runRedBlue(historic_graph.size_right, vec, historic_graph.size)
+        types = self.get_type(historic_graph.size_right)
 
         matching_count = 0
         trends = []
@@ -167,9 +171,9 @@ class FeldmanTSM(AlgorithmBase):
         visited_nodes += graph.size_left
         trends.append([visited_nodes, matching_count])
 
-        result = [-1] * historicGraph.size_right
-        offline = [-1] * historicGraph.size
-        count = [0] * historicGraph.size_right
+        result = [-1] * historic_graph.size_right
+        offline = [-1] * historic_graph.size
+        count = [0] * historic_graph.size_right
 
         # TODO: Handle the online edge cases and update the comments
         maxFlow = MaxFlow()
@@ -189,7 +193,7 @@ class FeldmanTSM(AlgorithmBase):
 
                 result[i] = red[types[i]]
                 offline[red[types[i]]] = i
-        
+
             trends.append([visited_nodes, matching_count])
 
         return (matching_count, trends)
