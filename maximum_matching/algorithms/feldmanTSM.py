@@ -1,6 +1,8 @@
 from typing import List, Tuple, Union
 
 import numpy as np
+from numpy import ndarray
+
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.algorithms.max_flow import MaxFlow
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
@@ -27,7 +29,7 @@ class FeldmanTSM(AlgorithmBase):
         Otherwise, ignore.
     """
 
-    def runMaxFlow(self, historicGraph: GraphBase) -> List:
+    def run_max_flow(self, historicGraph: GraphBase) -> List:
 
         maxFlow = MaxFlow()
         maxFlow.find_max_bipartite(historicGraph, True, sourceSinkCap=2)
@@ -53,7 +55,7 @@ class FeldmanTSM(AlgorithmBase):
 
         return vec
 
-    def runRedBlue(self, left_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
+    def run_red_blue(self, left_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
         red = [-1] * left_size
         blue = [-1] * left_size
         pred = [-1] * total_size
@@ -97,7 +99,7 @@ class FeldmanTSM(AlgorithmBase):
                         pred[prev] = ncur
                         cur_len += 1
 
-                        while (len(vec[ncur]) == 2):
+                        while len(vec[ncur]) == 2:
                             next = -1
                             if vec[ncur][0] == prev:
                                 next = vec[ncur][1]
@@ -124,7 +126,7 @@ class FeldmanTSM(AlgorithmBase):
                         else:
                             blue[cur] = pred[cur]
                             st = pred[cur]
-                            while (pred[st] != st):
+                            while pred[st] != st:
                                 red[pred[st]] = st
                                 blue[pred[st]] = pred[pred[st]]
                                 st = pred[pred[st]]
@@ -145,14 +147,14 @@ class FeldmanTSM(AlgorithmBase):
                             blue[st] = pred[st]
                             blue[pred[pred[st]]] = pred[st]
                             st = pred[pred[st]]
-                            while (pred[st] != st):
+                            while pred[st] != st:
                                 red[st] = pred[st]
                                 blue[pred[pred[st]]] = pred[st]
                                 st = pred[pred[st]]
 
-        return (red, blue)
+        return red, blue
 
-    def get_type(self, size: int) -> List[int]:
+    def get_type(self, size: int) -> Union[int, ndarray[int]]:
         return np.random.randint(low=0, high=size, size=size)
 
     def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
@@ -160,8 +162,8 @@ class FeldmanTSM(AlgorithmBase):
         historic_graph = kwargs["historic_graph"]
         assert isinstance(historic_graph, GraphBase)
 
-        vec = self.runMaxFlow(historicGraph=historic_graph)
-        (red, blue) = self.runRedBlue(historic_graph.size_right, vec, historic_graph.size)
+        vec = self.run_max_flow(historicGraph=historic_graph)
+        (red, blue) = self.run_red_blue(historic_graph.size_right, vec, historic_graph.size)
         types = self.get_type(historic_graph.size_right)
 
         matching_count = 0
@@ -182,13 +184,13 @@ class FeldmanTSM(AlgorithmBase):
             visited_nodes += 1
             count[types[i]] += 1
             if count[types[i]] == 1 and blue[types[i]] != -1 and offline[blue[types[i]]] == -1:
-                if (result[i] == -1 and matching_count < res[0]):
+                if result[i] == -1 and matching_count < res[0]:
                     matching_count += 1
 
                 result[i] = blue[types[i]]
                 offline[blue[types[i]]] = i
             elif count[types[i]] == 2 and red[types[i]] != -1 and offline[red[types[i]]] == -1:
-                if (result[i] == -1 and matching_count < res[0]):
+                if result[i] == -1 and matching_count < res[0]:
                     matching_count += 1
 
                 result[i] = red[types[i]]
@@ -196,4 +198,4 @@ class FeldmanTSM(AlgorithmBase):
 
             trends.append([visited_nodes, matching_count])
 
-        return (matching_count, trends)
+        return matching_count, trends
