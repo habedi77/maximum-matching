@@ -1,10 +1,13 @@
 from typing import List, Dict
+
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 from maximum_matching.algorithms import *
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
-from maximum_matching.utility.result_printer import write_results
+from maximum_matching.utility.result_printer import write_results, write_agg_results
 
 # For testing
 PRINT_OUTPUT = False
@@ -15,8 +18,8 @@ _algorithms = [
     Rand(),
     MinDeg(),
     Oblivious(),
-    FeldmanTSM(),
-    MaxFlow()
+    # FeldmanTSM(),
+    # MaxFlow()
 ]
 
 
@@ -40,8 +43,8 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
 
         matching_size, trend = alg.run(graph=graph, **kwarg)
 
-        if PRINT_OUTPUT:
-            print(matching_size)
+        if trend is not None:
+            trend = np.array(trend)[:, 1]
 
         results.append({
             "name": type(alg).__name__,
@@ -56,15 +59,41 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
 if __name__ == "__main__":
 
     tests = util.parser.load_tests_csv(file="agg_tests.csv")
-    result = []
+
+    final_agg_result = []
+    verbose_res = []
 
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Test item", position=0, ncols=80, ascii=True):
+        inner_results = []
+
         for seed in tqdm(range(t["repeats"]), desc="Iter", position=1, ncols=80, ascii=True):
             actual_g, hist_g = t["generator"].generate(
                 graph_class=graphs.FullMatrixGraph, seed=seed, **t.to_dict())
+            res = run_on_graph(actual_g, hist_g, algorithms=_algorithms, seed=seed)
 
-            result.append(run_on_graph(actual_g, hist_g, algorithms=_algorithms, seed=seed))
+            verbose_res.append(res)
+            inner_results += res
 
-        pass
+        df = pd.DataFrame.from_records(inner_results)
+        _agg_result = []
+
+        for a in _algorithms:
+            df_alg = df.loc[df['name'] == type(a).__name__]
+            trend_stack = np.vstack(df_alg['trend'].to_list())
+            _r = {
+                "id": idx,
+                "name": type(a).__name__,
+                "repeats": t["repeats"],
+                "size_left": t["size_left"],
+                "size_right": t["size_right"],
+                "avg_matching_size": df_alg['matching_size'].mean(),
+                "std_matching_size": df_alg['matching_size'].std(),
+                "avg_trend": trend_stack.mean(axis=0),
+                "std_trend": trend_stack.std(axis=0),
+            }
+            _agg_result.append(_r)
+            final_agg_result.append(_r)
+            write_agg_results(_agg_result, "agg_res")
+
     # TODO result writing
     # write_results(result=result)
