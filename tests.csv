@@ -1,2 +1,4 @@
-id,size_left,size_right,seed,generator,mean,std,hist_seed,hist_mean,hist_std,hist_multiply
-0,190,190,0,gaussian,20,0,10,10,0,10
+id,size_left,size_right,seed,generator,mean,std,hist_seed,hist_mean,hist_std,hist_multiply,density,hist_density
+0,190,190,0,gaussian,20,0,10,10,0,10,,
+0,190,190,0,density,20,0,10,,,10,0.5,0.5
+
