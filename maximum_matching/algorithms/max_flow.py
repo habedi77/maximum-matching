@@ -51,8 +51,6 @@ class MaxFlow(AlgorithmBase):
         min_capacity = self.INF
         self.visited = [False] * n
 
-        trends.append([len(visited_nodes_for_trends), max_flow])
-
         while self.BFS(src, sink, n) is True:
 
             x = sink
@@ -148,4 +146,4 @@ class MaxFlow(AlgorithmBase):
 
         max_matches, trends = self.find_max_bipartite(graph, DISABLE_TRENDS)
 
-        return (max_matches, trends)
+        return max_matches, trends
