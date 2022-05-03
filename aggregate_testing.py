@@ -3,6 +3,9 @@ from typing import List, Dict
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from multiprocessing import Pool, Queue
+
+from functools import partial
 
 from maximum_matching.algorithms import *
 import maximum_matching.graphs as graphs
@@ -23,23 +26,22 @@ _algorithms = [
 ]
 
 
-def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorithms, seed) -> List[Dict]:
+def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorithms) -> List[Dict]:
     """
     Runts tests with a list on algorithms on a given graph
 
     :param graph: the populated graph to test on
     :param hist_graph: historic graph for FTSM algorithm
     :param algorithms: list on algorithms to run
-    :param seed: seed to note in results
     :return: a list of dictionary with the results of each algorithm
     """
 
     results = []
-    tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
+    # tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
     kwarg = {"historic_graph": hist_graph}
 
-    for alg in tqdm_inst:
-        tqdm_inst.set_postfix_str(type(alg).__name__)
+    for alg in algorithms:
+        # tqdm_inst.set_postfix_str(type(alg).__name__)
 
         matching_size, trend = alg.run(graph=graph, **kwarg)
 
@@ -50,33 +52,51 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
             "name": type(alg).__name__,
             "matching_size": matching_size,
             "trend": trend,
-            "seed": seed,
         })
 
     return results
 
 
-if __name__ == "__main__":
+def process_image(alg, g):
+    a_g, h_g = g
+    return run_on_graph(a_g, h_g, alg)
+    # print(3)
+    # q.put(_res)
 
-    tests = util.parser.load_tests_csv(file="agg_tests.csv")
+
+if __name__ == "__main__":
 
     final_agg_result = []
     verbose_res = []
+    func = partial(process_image, _algorithms)
+    tests = util.parser.load_tests_csv(file="agg_tests.csv")
 
+    # For each item in agg_tests.csv
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Test item", position=0, ncols=80, ascii=True):
+
+        pool = Pool()
+        try:
+            # Run tests 'repeats' times with different seeds
+            gs = [None] * t["repeats"]
+
+            for s in range(t["repeats"]):
+                gs[s] = t["generator"].generate(graph_class=graphs.FullMatrixGraph, seed=s, **t.to_dict())
+
+            p_iter = pool.imap_unordered(func, gs)
+
+            # Progress bar
+            res = list(tqdm(p_iter, total=t["repeats"], desc="Progress", leave=False, position=1, ncols=80, ascii=True))
+
+        finally:
+            pool.close()
+            pool.join()
+
         inner_results = []
-
-        for seed in tqdm(range(t["repeats"]), desc="Iter", position=1, ncols=80, ascii=True):
-            actual_g, hist_g = t["generator"].generate(
-                graph_class=graphs.FullMatrixGraph, seed=seed, **t.to_dict())
-            res = run_on_graph(actual_g, hist_g, algorithms=_algorithms, seed=seed)
-
-            verbose_res.append(res)
-            inner_results += res
-
+        for s in range(t["repeats"]):
+            inner_results += res[s]
         df = pd.DataFrame.from_records(inner_results)
-        _agg_result = []
 
+        _agg_result = []
         for a in _algorithms:
             df_alg = df.loc[df['name'] == type(a).__name__]
             trend_stack = np.vstack(df_alg['trend'].to_list())
@@ -93,7 +113,4 @@ if __name__ == "__main__":
             }
             _agg_result.append(_r)
             final_agg_result.append(_r)
-            write_agg_results(_agg_result, "agg_res")
-
-    # TODO result writing
-    # write_results(result=result)
+            write_agg_results(_agg_result, f"results/agg_res_{idx}")
