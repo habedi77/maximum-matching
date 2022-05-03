@@ -154,7 +154,7 @@ class FeldmanTSM(AlgorithmBase):
 
         return red, blue
 
-    def get_type(self, size: int) -> Union[int, ndarray[int]]:
+    def get_type(self, size: int) -> Union[int, ndarray]:
         return np.random.randint(low=0, high=size, size=size)
 
     def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
