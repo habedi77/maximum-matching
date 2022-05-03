@@ -1,2 +1,2 @@
 id,size_left,size_right,repeats,generator,mean,std,density,hist_seed,hist_mean,hist_std,hist_multiply,hist_density
-0,300,300,100,gaussian,30,20,0,10,10,0,10,0
+0,300,300,2,gaussian,30,20,0,10,10,0,10,0

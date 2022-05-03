@@ -1,12 +1,7 @@
 from typing import List, Dict
 from tqdm import tqdm
 
-from maximum_matching.algorithms.Matching import is_valid_match
-from maximum_matching.algorithms.vazirani import Vaz
-from maximum_matching.algorithms.Rand import Rand
-from maximum_matching.algorithms.MinDegree import MinDeg
-import maximum_matching.algorithms as alg
-from maximum_matching.algorithms.feldmanTSM import FeldmanTSM
+from maximum_matching.algorithms import *
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
 from maximum_matching.utility.result_printer import write_results
@@ -19,9 +14,9 @@ _algorithms = [
     Vaz(),  # Vazirani (Online)
     Rand(),
     MinDeg(),
-    alg.Oblivious(),
-    # alg.FeldmanTSM(),
-    alg.MaxFlow()
+    Oblivious(),
+    FeldmanTSM(),
+    MaxFlow()
 ]
 
 
@@ -37,19 +32,21 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
     """
 
     results = []
+    tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
 
-    for algr in tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False):
+    for alg in tqdm_inst:
+        tqdm_inst.set_postfix_str(type(alg).__name__)
 
-        if isinstance(algr, type(alg.FeldmanTSM())):
-            matching_size, trend = algr.run(graph=graph, historicGraph=hist_graph)
+        if isinstance(alg, FeldmanTSM):
+            matching_size, trend = alg.run(graph=graph, historicGraph=hist_graph)
         else:
-            matching_size, trend = algr.run(graph=graph)
+            matching_size, trend = alg.run(graph=graph)
 
         if PRINT_OUTPUT:
             print(matching_size)
 
         results.append({
-            "name": type(algr).__name__,
+            "name": type(alg).__name__,
             "matching_size": matching_size,
             "trend": trend,
             "seed": seed,
