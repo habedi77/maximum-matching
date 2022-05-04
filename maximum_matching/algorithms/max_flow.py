@@ -21,12 +21,14 @@ class MaxFlow(AlgorithmBase):
         # self.bfs_path = np.empty(1)
 
     @staticmethod
-    def bfs(start: int, endd: int, n: int, vec, capacity, visited) -> Tuple[bool, np.ndarray]:
+    def bfs(start: int, endd: int, n: int, vec, capacity) -> Tuple[bool, np.ndarray]:
         bfs_path = np.full(shape=n, fill_value=-1)
-        que = [start]
+        visited = np.full(shape=n, fill_value=False, dtype=bool)
         visited[start] = True
 
+        que = [start]
         found = False
+
         while len(que) > 0 and not found:
             u = que.pop(0)
 
@@ -34,17 +36,15 @@ class MaxFlow(AlgorithmBase):
                 break
 
             vec_u = np.where(vec[u] > -1)[0]
-            for v in vec_u:
-                if not visited[v] and capacity[u][v] > 0:
-                    que.append(v)
-                    visited[v] = True
-                    bfs_path[v] = u
+            vec_u_2 = vec_u[np.logical_and(np.logical_not(visited[vec_u]), capacity[u][vec_u] > 0)]
 
-                    if v == endd:
-                        found = True
+            visited[vec_u_2] = True
+            bfs_path[vec_u_2] = u
+            que += list(vec_u_2)
 
-                if found:
-                    break
+            if endd in vec_u_2:
+                found = True
+                break
 
         return found, bfs_path
 
@@ -52,9 +52,8 @@ class MaxFlow(AlgorithmBase):
     def run_max_flow(src: int, sink: int, n: int, vec, capacity) -> int:
         max_flow = 0
         min_capacity = MaxFlow.INF
-        visited = np.full(shape=n, fill_value=False, dtype=bool)
 
-        bfs_res, bfs_path = MaxFlow.bfs(src, sink, n, vec, capacity, visited)
+        bfs_res, bfs_path = MaxFlow.bfs(src, sink, n, vec, capacity)
         while bfs_res is True:
 
             x = sink
@@ -70,9 +69,7 @@ class MaxFlow(AlgorithmBase):
 
             max_flow += min_capacity
             min_capacity = MaxFlow.INF
-
-            visited = np.full(shape=n, fill_value=False, dtype=bool)
-            bfs_res, bfs_path = MaxFlow.bfs(src, sink, n, vec, capacity, visited)
+            bfs_res, bfs_path = MaxFlow.bfs(src, sink, n, vec, capacity)
 
         return max_flow
 
