@@ -10,7 +10,7 @@ from functools import partial
 from maximum_matching.algorithms import *
 import maximum_matching.graphs as graphs
 import maximum_matching.utility as util
-from maximum_matching.utility.result_printer import write_results, write_agg_results
+from maximum_matching.utility.result_printer import *
 
 # For testing
 PRINT_OUTPUT = False
@@ -113,4 +113,4 @@ if __name__ == "__main__":
             }
             _agg_result.append(_r)
             final_agg_result.append(_r)
-            write_agg_results(_agg_result, f"results/agg_res_{idx}")
+            write_agg_results_v2(_agg_result, f"results/agg_res_{idx}")
