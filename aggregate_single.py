@@ -37,11 +37,11 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
     """
 
     results = []
-    # tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
+    tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
     kwarg = {"historic_graph": hist_graph}
 
-    for alg in algorithms:
-        # tqdm_inst.set_postfix_str(type(alg).__name__)
+    for alg in tqdm_inst:
+        tqdm_inst.set_postfix_str(type(alg).__name__)
 
         matching_size, trend = alg.run(graph=graph, **kwarg)
 
@@ -57,43 +57,22 @@ def run_on_graph(graph: graphs.GraphBase, hist_graph: graphs.GraphBase, algorith
     return results
 
 
-def process_image(alg, g):
-    a_g, h_g = g
-    return run_on_graph(a_g, h_g, alg)
-    # print(3)
-    # q.put(_res)
-
-
 if __name__ == "__main__":
 
     final_agg_result = []
     verbose_res = []
-    func = partial(process_image, _algorithms)
     tests = util.parser.load_tests_csv(file="agg_tests.csv")
 
     # For each item in agg_tests.csv
     for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Test item", position=0, ncols=80, ascii=True):
-
-        pool = Pool()
-        try:
-            # Run tests 'repeats' times with different seeds
-            gs = [None] * t["repeats"]
-
-            for s in range(t["repeats"]):
-                gs[s] = t["generator"].generate(graph_class=graphs.FullMatrixGraph, seed=s, **t.to_dict())
-
-            p_iter = pool.imap_unordered(func, gs)
-
-            # Progress bar
-            res = list(tqdm(p_iter, total=t["repeats"], desc="Progress", leave=False, position=1, ncols=80, ascii=True))
-
-        finally:
-            pool.close()
-            pool.join()
-
         inner_results = []
-        for s in range(t["repeats"]):
-            inner_results += res[s]
+        for seed in tqdm(range(t["repeats"]), desc="Iter", position=1, ncols=80, ascii=True):
+            # Run tests 'repeats' times with different seeds
+            ag, hg = t["generator"].generate(graph_class=graphs.FullMatrixGraph, seed=seed, **t.to_dict())
+            res = run_on_graph(ag, hg, _algorithms)
+            inner_results += res
+            verbose_res += res
+
         df = pd.DataFrame.from_records(inner_results)
 
         _agg_result = []
@@ -103,9 +82,9 @@ if __name__ == "__main__":
             _r = {
                 "id": idx,
                 "name": type(a).__name__,
-                # "repeats": t["repeats"],
-                # "size_left": t["size_left"],
-                # "size_right": t["size_right"],
+                "repeats": t["repeats"],
+                "size_left": t["size_left"],
+                "size_right": t["size_right"],
                 "avg_matching_size": df_alg['matching_size'].mean(),
                 "std_matching_size": df_alg['matching_size'].std(),
                 "avg_trend": trend_stack.mean(axis=0),
@@ -113,4 +92,4 @@ if __name__ == "__main__":
             }
             _agg_result.append(_r)
             final_agg_result.append(_r)
-            write_agg_results_v2(_agg_result, f"results/agg_mx_res_{idx}")
+            write_agg_results_v2(_agg_result, f"results/agg_single_res_{idx}")
