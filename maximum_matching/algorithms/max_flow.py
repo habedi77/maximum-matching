@@ -3,7 +3,7 @@ from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
 # For testing
-DISABLE_TRENDS = False
+DISABLE_TRENDS = True
 
 
 class MaxFlow(AlgorithmBase):
@@ -137,7 +137,7 @@ class MaxFlow(AlgorithmBase):
             trends.append([visited_nodes, count_matches])
 
             if disable_trends:
-                break
+                trends = [[graph.size, count_matches]] * graph.size_right
 
         return max_matches, trends
 
