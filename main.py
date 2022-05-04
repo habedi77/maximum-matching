@@ -1,7 +1,6 @@
 from typing import List, Dict, Tuple
 from tqdm import tqdm
 
-from maximum_matching.algorithms.Matching import is_valid_match
 from maximum_matching.algorithms.vazirani import Vaz
 from maximum_matching.algorithms.Rand import Rand
 from maximum_matching.algorithms.MinDegree import MinDeg
