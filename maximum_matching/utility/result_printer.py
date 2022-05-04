@@ -82,11 +82,11 @@ def write_agg_results_v2(result: List[Dict], fname):
         name = item['name']
         # result_dict[f'{name}_rep_sz_l_r'] = [item['repeats'], item['size_left'], item['size_right']]
         # result_dict[f'{name}_matching_avg_std'] = [item['avg_matching_size'], item['std_matching_size']]
-        result_dict[f'{name}_trend_avg'] = item['avg_trend']
+        result_dict[f'z_{name}_trend_avg'] = item['avg_trend']
 
     for item in result:
         name = item['name']
-        result_dict[f'{name}_trend_std'] = item['std_trend']
+        result_dict[f'z_{name}_trend_std'] = item['std_trend']
 
     for key in result_dict.keys():
         if len(result_dict[key]) < max_len:
