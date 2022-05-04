@@ -4,7 +4,6 @@ from typing import Tuple, Union, List
 import numpy as np
 
 from ..utility.Flags import *
-from .Matching import *
 from .algorithm_base import AlgorithmBase
 from ..graphs.graph_base import BipartiteSet
 
@@ -47,7 +46,9 @@ class Vaz(AlgorithmBase):
             shuffle(girls)
 
         # Array of edges in our matching
-        max_matching = []
+        max_matching = np.full((graph.size, 2), fill_value=-1)
+        mm_idx = 0
+
         trend = [[len(boys), 0]]
         num_girls_evaluated = 0
 
@@ -60,9 +61,12 @@ class Vaz(AlgorithmBase):
             # Check neighbours. Match with the eligible boy (if any) of the highest rank
             valid_matches = []  # Pick highest rank out of the possible valid matches
             for neigh in neighbours_of_vertex:
-                edge_test = create_edge(vertex, neigh)
+                edge_test = [vertex, neigh]
 
-                if is_valid_match(max_matching, edge_test):
+                # Check if any vertex from any edge in max_matching contains either of these two vertices
+                if edge_test[0] in max_matching or edge_test[1] in max_matching:
+                    pass
+                else:
                     valid_matches.append([edge_test, np.where(boys == neigh)])
 
             highest_rank = []
@@ -72,9 +76,11 @@ class Vaz(AlgorithmBase):
 
             # Use the edge to the highest ranked eligible boy
             if len(highest_rank) > 0:
-                max_matching.append(highest_rank[0])
+                # max_matching.append(highest_rank[0])
+                max_matching[mm_idx] = highest_rank[0]
+                mm_idx += 1
 
-            trend.append([len(boys) + num_girls_evaluated, len(max_matching)])
+            trend.append([len(boys) + num_girls_evaluated, mm_idx])
             valid_matches.clear()
 
-        return [len(max_matching), trend]
+        return mm_idx, trend
