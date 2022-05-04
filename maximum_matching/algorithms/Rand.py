@@ -62,7 +62,7 @@ class Rand(AlgorithmBase):
                 max_matching[mm_idx] = valid_matches[random.randrange(0, len(valid_matches))]
                 mm_idx += 1
 
-            trend.append([len(left) + num_evaluated, len(max_matching)])
+            trend.append([len(left) + num_evaluated, mm_idx])
             valid_matches.clear()
 
         return mm_idx, trend
