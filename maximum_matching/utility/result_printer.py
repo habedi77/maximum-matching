@@ -67,3 +67,26 @@ def write_agg_results(result: List[Dict], fname):
     # df.to_excel(excel_writer=f"{fname}.xls", sheet_name='sheet1')
     df.to_csv(f"{fname}.csv")
     pass
+
+
+def write_agg_results_v2(result: List[Dict], fname):
+    result_dict = dict()
+
+    max_len = max([len(item['std_trend']) for item in result])
+
+    for item in result:
+        name = item['name']
+
+        result_dict[f'{name}_rep_sz_l_r'] = [item['repeats'], item['size_left'], item['size_right']]
+        result_dict[f'{name}_matching_avg_st'] = [item['avg_matching_size'], item['std_matching_size']]
+
+        result_dict[f'{name}_trend_avg'] = item['avg_trend']
+        result_dict[f'{name}_trend_std'] = item['std_trend']
+
+    for key in result_dict.keys():
+        if len(result_dict[key]) < max_len:
+            result_dict[key] += [None] * (max_len - len(result_dict[key]))
+
+    df = pd.DataFrame.from_records(result_dict)
+    df.to_csv(f"{fname}.csv")
+    pass
