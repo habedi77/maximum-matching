@@ -85,7 +85,7 @@ class MaxFlow(AlgorithmBase):
         self.vec[v].append(u)
 
 
-    def prepare_graph(self, graph: GraphBase, sourceSinkCap: int = 1) -> List:
+    def find_max_bipartite(self, graph: GraphBase, disable_trends: bool, sourceSinkCap: int = 1) -> List:
 
         left_side = graph.get_independent_set(BipartiteSet.left)
         right_side = graph.get_independent_set(BipartiteSet.right)
@@ -105,7 +105,7 @@ class MaxFlow(AlgorithmBase):
         for right_idx in range(0, graph.size_right):
 
             # generating for large input
-            if DISABLE_TRENDS: 
+            if disable_trends: 
                 right_idx = graph.size_right - 1
 
             self.vec = [None] * total_nodes
@@ -137,23 +137,16 @@ class MaxFlow(AlgorithmBase):
 
             trends.append([visited_nodes, count_matches])
 
-            if DISABLE_TRENDS:
+            if disable_trends:
                 break
 
-        # return (source_node, sink_node, total_nodes)
         return max_matches, trends
 
 
     def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
 
         print("Running max flow...")
-        
-        # src, sink, n = self.prepare_graph(graph)
 
-        # count_matches, trends = self.run_max_flow(src, sink, n)
-
-        max_matches, trends = self.prepare_graph(graph)
-
-        # print(trends)
+        max_matches, trends = self.find_max_bipartite(graph, DISABLE_TRENDS)
 
         return (max_matches, trends)
