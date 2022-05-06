@@ -17,12 +17,12 @@ PRINT_OUTPUT = False
 
 # List the algorithms you would like the program to run
 _algorithms = [
-    Vaz(),  # Vazirani (Online)
-    Rand(),
-    MinDeg(),
-    Oblivious(),
-    # FeldmanTSM(),
-    MaxFlow()
+    # Vaz(),  # Vazirani (Online)
+    # Rand(),
+    # MinDeg(),
+    # Oblivious(),
+    FeldmanTSM(),
+    # MaxFlow()
 ]
 
 

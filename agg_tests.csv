@@ -1,4 +1,6 @@
 id,size_left,size_right,repeats,generator,mean,std,density,hist_seed,hist_mean,hist_std,hist_multiply,hist_density
+80,190,190,1,gaussian,20,0,,0,10,0,10,0
+90,190,190,1,density,,,0.5,0,0,0,10,0.5
 0,1000,1000,10,density,,,0.001,0,0,0,0,0
 1,1000,1000,10,density,,,0.002,0,0,0,0,0
 2,1000,1000,10,density,,,0.003,0,0,0,0,0
