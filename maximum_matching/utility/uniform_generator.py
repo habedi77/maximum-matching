@@ -3,9 +3,9 @@ import numpy as np
 from .generator_base import GeneratorBase, G
 
 
-class DensityGenerator(GeneratorBase):
+class UniformGenerator(GeneratorBase):
 
-    def _generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, density: float) -> G:
+    def _generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, mean: float) -> G:
         """
         Connects a given percentage of edges between the two sets of a bipartite graph
         Density=0 : empty graph, Density=1 : complete bipartite graph
@@ -15,7 +15,7 @@ class DensityGenerator(GeneratorBase):
         :param size_right: size of the right bipartite set
         :param graph_class: type of graph class with base of BaseBipartiteGraph
         :param seed: seed for generator
-        :param density: graph edge desity
+        :param mean: graph vertices expected degree
         :return: populated instance of a graph_class provided
         """
 
@@ -28,11 +28,11 @@ class DensityGenerator(GeneratorBase):
 
         # Only want ids from 0 to edge_cutoff-1
         # degrees is number of edges per vertex
-        edge_cutoff = np.floor(size_left * size_right * density)
-        degree = (edge_dist < edge_cutoff).sum(axis=1)
+        edge_cutoff = np.floor(size_left * mean)
+        degrees = (edge_dist < edge_cutoff).sum(axis=1)
 
         for i in range(size_left):
-            connection_index = np.random.choice(size_right, size=degree[i], replace=False)
+            connection_index = np.random.choice(size_right, size=degrees[i], replace=False)
             graph.b_bulk_connect(i, connection_index)
 
         return graph
@@ -50,17 +50,17 @@ class DensityGenerator(GeneratorBase):
         :return: the same BaseBipartiteGraph instance provided
         """
 
-        density = self.get_kwargs_val('density', kwargs)
+        mean = self.get_kwargs_val('mean', kwargs)
 
-        hist_density = self.get_kwargs_val('hist_density', kwargs)
+        hist_mean = self.get_kwargs_val('hist_mean', kwargs)
         hist_seed = self.get_kwargs_val('hist_seed', kwargs)
         hist_multiply = self.get_kwargs_val('hist_multiply', kwargs)
 
-        actual_graph = self._generate(size_left, size_right, graph_class, seed, density)
+        actual_graph = self._generate(size_left, size_right, graph_class, seed, mean)
 
         hist_graph = self._generate(size_left * hist_multiply,
                                     size_right * hist_multiply,
                                     graph_class, hist_seed,
-                                    hist_density)
+                                    hist_mean)
 
         return actual_graph, hist_graph
