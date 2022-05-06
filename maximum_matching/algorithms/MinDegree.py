@@ -17,9 +17,10 @@ class MinDeg(AlgorithmBase):
     Minimum_Degree online bipartite algorithm
     As a vertex arrives, match to a neighbour with the minimum degree
     """
+
     def run(self, graph, **kwargs) -> Tuple[int, Union[List, None]]:
         # Assumption: left arrive first [left, right = the bipartite graph G = {L, R, E}]
-        left = graph.get_independent_set(BipartiteSet.left)
+        left = graph.b_get_independent_set(BipartiteSet.left)
 
         if left is None or len(left) == 0:
             print("Could not evaluate graph.")
@@ -28,7 +29,7 @@ class MinDeg(AlgorithmBase):
 
         # print("running Minimum Degree Algorithm ... ")
 
-        right = graph.get_independent_set(BipartiteSet.right)
+        right = graph.b_get_independent_set(BipartiteSet.right)
 
         # Array of edges in our matching
         max_matching = np.full((graph.size, 2), fill_value=-1)
@@ -40,7 +41,7 @@ class MinDeg(AlgorithmBase):
             num_evaluated = num_evaluated + 1
 
             # Check neighbours of arriving vertex
-            neighbours_of_vertex = graph.list(vertex)
+            neighbours_of_vertex = graph.b_online_list(vertex, step=num_evaluated, left_set=False)
 
             # Match with the eligible of the minimum degree
             selected_match = []
@@ -52,7 +53,7 @@ class MinDeg(AlgorithmBase):
                 if edge_test[0] in max_matching or edge_test[1] in max_matching:
                     pass
                 else:
-                    degree = len(graph.list(neigh))
+                    degree = len(graph.b_online_list(neigh, step=num_evaluated, left_set=True))
                     if degree < selected_match_degree:
                         selected_match = edge_test
                         selected_match_degree = degree

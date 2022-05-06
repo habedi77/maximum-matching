@@ -104,6 +104,18 @@ class GraphBase(ABC):
         else:
             return self.list(x + self.size_left)
 
+    @abstractmethod
+    def b_online_list(self, x: int, step: int, left_set: bool) -> np.ndarray:
+        """
+        get list of vertices connected to vertex x in the specified set, for an online step
+
+        :param left_set: whether x belongs in the left set or the right set
+        :param step: current step of online algorithm
+        :param x: vertex index
+        :return: np.ndarray of vertex indices connected to i
+        """
+        pass
+
     def b_connected(self, left: int, right: int) -> bool:
         """
         Check whether vertex form the left set is connected to the vertex from the right set
