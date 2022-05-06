@@ -17,10 +17,10 @@ PRINT_OUTPUT = False
 
 # List the algorithms you would like the program to run
 _algorithms = [
-    # Vaz(),  # Vazirani (Online)
-    # Rand(),
+    Vaz(),
+    Rand(),
     MinDeg(),
-    # Oblivious(),
+    Oblivious(),
     # FeldmanTSM(),
     # MaxFlow()
 ]
@@ -37,8 +37,6 @@ def run_on_graph(id, graph, hist_graph, alg) -> Dict:
     :return: a list of dictionary with the results of each algorithm
     """
 
-    results = []
-    # tqdm_inst = tqdm(algorithms, desc="Algorithms", position=2, ncols=80, ascii=True, leave=False)
     kwarg = {"historic_graph": hist_graph}
 
     matching_size, trend = alg.run(graph=graph, **kwarg)
@@ -57,8 +55,6 @@ def run_on_graph(id, graph, hist_graph, alg) -> Dict:
 def process_image(arg):
     id, alg, a_g, h_g = arg
     return run_on_graph(id=id, graph=a_g, hist_graph=h_g, alg=alg)
-    # print(3)
-    # q.put(_res)
 
 
 if __name__ == "__main__":
@@ -67,11 +63,15 @@ if __name__ == "__main__":
     test_file = "agg_tests.csv"
     tests = util.parser.load_tests_csv(file=test_file)
 
+    print(f"Preparing tests")
     args = []  # List of (id, algorithm, graph, hist_graph)
-    for idx, t in tests.iterrows():  # For each item in agg_tests.csv
-        for s in range(t["repeats"]):  # Run tests 'repeats' times with different seeds
+    for idx, t in tqdm(tests.iterrows(), total=tests.shape[0], desc="Test", ncols=80, ascii=True, leave=False):
+        # For each item in agg_tests.csv
+        for s in tqdm(range(t["repeats"]), desc="Repeat", position=1, ncols=70, ascii=True, leave=False):
+            # Run tests 'repeats' times with different seeds
             ga, gh = t["generator"].generate(graph_class=graphs.FullMatrixGraph, seed=s, **t.to_dict())
-            for a in _algorithms:  # For each algorithm
+            for a in tqdm(_algorithms, desc="Repeat", position=2, ncols=60, ascii=True, leave=False):
+                # For each algorithm
                 args.append((idx, a, ga, gh))
 
     print(f"Prepared {len(args)} tests")
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     try:
         p_iter = pool.imap_unordered(process_image, args)
         # Progress bar
-        res = list(tqdm(p_iter, total=len(args), desc="Tests", leave=False, position=1, ncols=100, ascii=True))
+        res = list(tqdm(p_iter, total=len(args), desc="Process", leave=False, position=1, ncols=100, ascii=True))
     finally:
         pool.close()
         pool.join()
