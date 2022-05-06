@@ -1,6 +1,7 @@
 from typing import List, Tuple, Union
 
 import numpy as np
+from numpy import ndarray
 
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
@@ -111,6 +112,45 @@ class MaxFlow(AlgorithmBase):
         trends = [[graph.size, max_matches]] * (graph.size_right + 1)
 
         return max_matches, trends
+
+    @staticmethod
+    def find_max_bipartite_with_cap(graph: GraphBase, sourceSinkCap: int = 1) -> \
+            Tuple[int, List, ndarray]:
+
+        left_side = graph.get_independent_set(BipartiteSet.left)
+        right_side = graph.get_independent_set(BipartiteSet.right)
+
+        source_node = graph.size
+        sink_node = graph.size + 1
+        total_nodes = graph.size + 2
+
+        vec = np.full(shape=(total_nodes, total_nodes), fill_value=-1, dtype=int)
+        capacity = np.zeros((total_nodes, total_nodes))
+
+        # connecting source_node with left side
+        vec[source_node, left_side] = 1
+        vec[left_side, source_node] = 1
+        capacity[left_side, source_node] = sourceSinkCap
+        capacity[source_node, left_side] = sourceSinkCap
+
+        # connecting right_side with sink_node
+        vec[sink_node, right_side] = 1
+        vec[right_side, sink_node] = 1
+        capacity[right_side, sink_node] = sourceSinkCap
+        capacity[sink_node, right_side] = sourceSinkCap
+
+        for v in right_side:
+            neighbours = graph.list(v)
+            vec[neighbours, v] = 1
+            vec[v, neighbours] = 1
+            capacity[v, neighbours] = sourceSinkCap
+            capacity[neighbours, v] = sourceSinkCap
+
+        max_matches = MaxFlow.run_max_flow(source_node, sink_node, total_nodes, vec, capacity)
+
+        trends = [[graph.size, max_matches]] * (graph.size_right + 1)
+
+        return max_matches, trends, capacity
 
     def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
         max_matches, trends = self.find_max_bipartite(graph)

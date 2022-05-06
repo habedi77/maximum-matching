@@ -32,7 +32,7 @@ class FeldmanTSM(AlgorithmBase):
     def run_max_flow(self, historicGraph: GraphBase) -> List:
 
         maxFlow = MaxFlow()
-        maxFlow.find_max_bipartite(historicGraph, True, sourceSinkCap=2)
+        _, _, capacity = maxFlow.find_max_bipartite_with_cap(historicGraph, sourceSinkCap=2)
 
         vec = [None] * historicGraph.size
 
@@ -40,7 +40,7 @@ class FeldmanTSM(AlgorithmBase):
         for u in historicGraph.get_independent_set(BipartiteSet.left):
             for v in historicGraph.list(u):
 
-                if maxFlow.capacity[u][v] == 0:  # capacity zero means flow is 1
+                if capacity[u][v] == 0:  # capacity zero means flow is 1
                     if vec[u] is None:
                         vec[u] = []
 
@@ -50,7 +50,7 @@ class FeldmanTSM(AlgorithmBase):
                     vec[u].append(v)
                     vec[v].append(u)
 
-                elif maxFlow.capacity[u][v] > 1:
+                elif capacity[u][v] > 1:
                     raise ValueError('Capacity should not be more than 1!')
 
         return vec
