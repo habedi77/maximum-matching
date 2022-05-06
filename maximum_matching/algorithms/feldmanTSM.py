@@ -46,7 +46,7 @@ class FeldmanTSM(AlgorithmBase):
 
                     if vec[v] is None:
                         vec[v] = []
-
+                    
                     vec[u].append(v)
                     vec[v].append(u)
 
@@ -55,21 +55,23 @@ class FeldmanTSM(AlgorithmBase):
 
         return vec
 
-    def run_red_blue(self, left_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
-        red = [-1] * left_size
-        blue = [-1] * left_size
+    def run_red_blue(self, right_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
+        red = [-1] * total_size
+        blue = [-1] * total_size
         pred = [-1] * total_size
 
-        for i in range(left_size):
+        for i in range(total_size):
             if vec[i] is None:
                 vec[i] = []
 
-        for i in range(0, left_size):
+        left_size = total_size - right_size
+
+        for i in range(left_size, total_size):
             if pred[i] == -1 and len(vec[i]) != 0:
                 cur = vec[i][0]
                 pred[cur] = i
                 cur_len = 2
-
+                
                 while len(vec[cur]) == 2 and cur != i:
                     next = -1
                     if vec[cur][0] == pred[cur]:
@@ -115,7 +117,7 @@ class FeldmanTSM(AlgorithmBase):
                         pred[i] = i
 
                     if cur_len % 2 == 0:  # number of nodes on the path is even, i.e. length is odd
-                        if cur >= left_size:
+                        if cur >= total_size:
                             blue[pred[cur]] = cur
                             st = pred[cur]
                             while pred[st] != st:
@@ -131,7 +133,7 @@ class FeldmanTSM(AlgorithmBase):
                                 blue[pred[st]] = pred[pred[st]]
                                 st = pred[pred[st]]
                     else:
-                        if cur >= left_size:
+                        if cur >= total_size:
                             st = cur
 
                             blue[pred[st]] = st
@@ -154,8 +156,16 @@ class FeldmanTSM(AlgorithmBase):
 
         return red, blue
 
-    def get_type(self, size: int) -> Union[int, ndarray]:
-        return np.random.randint(low=0, high=size, size=size)
+    def get_type(self, size: int, right_size: int) -> Union[int, ndarray]:
+        rand = np.random.randint(low=size - right_size, high=size, size=right_size)
+        result = [size + size] * size
+
+        idx = size - right_size
+        for i in rand:
+            result[idx] = i
+            idx += 1
+
+        return result
 
     def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
         assert "historic_graph" in kwargs
@@ -164,7 +174,7 @@ class FeldmanTSM(AlgorithmBase):
 
         vec = self.run_max_flow(historicGraph=historic_graph)
         (red, blue) = self.run_red_blue(historic_graph.size_right, vec, historic_graph.size)
-        types = self.get_type(historic_graph.size_right)
+        types = self.get_type(historic_graph.size, historic_graph.size_right)
 
         matching_count = 0
         trends = []
@@ -173,29 +183,36 @@ class FeldmanTSM(AlgorithmBase):
         visited_nodes += graph.size_left
         trends.append([visited_nodes, matching_count])
 
-        result = [-1] * historic_graph.size_right
-        offline = [-1] * historic_graph.size
-        count = [0] * historic_graph.size_right
+        result = [-1] * historic_graph.size
+        count = [0] * historic_graph.size
 
-        # TODO: Handle the online edge cases and update the comments
-        maxFlow = MaxFlow()
-        res = maxFlow.find_max_bipartite(graph, True, sourceSinkCap=1)
-        for i in graph.b_get_independent_set(BipartiteSet.right):
+        visited = set()
+        for tempI in graph.b_get_independent_set(BipartiteSet.right):
             visited_nodes += 1
-            count[types[i]] += 1
-            if count[types[i]] == 1 and blue[types[i]] != -1 and offline[blue[types[i]]] == -1:
-                if result[i] == -1 and matching_count < res[0]:
-                    matching_count += 1
 
-                result[i] = blue[types[i]]
-                offline[blue[types[i]]] = i
-            elif count[types[i]] == 2 and red[types[i]] != -1 and offline[red[types[i]]] == -1:
-                if result[i] == -1 and matching_count < res[0]:
-                    matching_count += 1
+            neighbours = list((set(graph.b_list(tempI, False))) - visited)
 
-                result[i] = red[types[i]]
-                offline[red[types[i]]] = i
+            if len(neighbours) > 0:
+                random_id = np.random.randint(0, len(neighbours))
+                random_neighbour = neighbours[random_id]
+                visited.add(random_neighbour)
 
+                i = tempI + historic_graph.size_left
+
+                count[types[i]] += 1
+                if count[types[i]] == 1 and blue[types[i]] != -1:
+                    if result[i] == -1:
+                        matching_count += 1
+
+                    result[i] = 0
+                elif count[types[i]] == 2 and red[types[i]] != -1:
+                    if result[i] == -1:
+                        matching_count += 1
+
+                    result[i] = 0
+        
             trends.append([visited_nodes, matching_count])
+
+        # print("matching_count: ", matching_count)
 
         return matching_count, trends

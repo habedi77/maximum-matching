@@ -45,7 +45,7 @@ class Oblivious(AlgorithmBase):
 
         for unknown_node in unknown_nodes:
             visited_vertices += 1
-            neighbours = graph.b_list(unknown_node, BipartiteSet.right)
+            neighbours = graph.b_list(unknown_node, False)
 
             if len(neighbours) > 0:
                 random_id = np.random.randint(0, len(neighbours))

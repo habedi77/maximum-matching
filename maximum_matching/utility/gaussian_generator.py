@@ -46,10 +46,9 @@ class GaussianGenerator(GeneratorBase):
         hist_multiply = self.get_kwargs_val('hist_multiply', kwargs)
 
         actual_graph = self.gen_graph(size_left, size_right, graph_class, seed, mean, std)
-
-        hist_graph = self.gen_graph(size_left * hist_multiply,
-                                    size_right * hist_multiply,
-                                    graph_class, hist_seed,
-                                    hist_mean, hist_std)
+        hist_graph = self.gen_graph(
+            max(size_left, size_right) * hist_multiply,
+            max(size_left, size_right) * hist_multiply,
+            graph_class, hist_seed, hist_mean, hist_std)
 
         return actual_graph, hist_graph
