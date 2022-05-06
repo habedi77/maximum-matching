@@ -50,8 +50,8 @@ class FeldmanTSM(AlgorithmBase):
                     vec[u].append(v)
                     vec[v].append(u)
 
-                elif capacity[u][v] > 1:
-                    raise ValueError('Capacity should not be more than 1!')
+                # elif capacity[u][v] > 1:
+                #     raise ValueError('Capacity should not be more than 1!')
 
         return vec
 
