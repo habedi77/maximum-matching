@@ -207,6 +207,6 @@ class FeldmanTSM(AlgorithmBase):
         
             trends.append([visited_nodes, matching_count])
             
-        # print("matching_count: ", matching_count)
+        print("matching_count: ", matching_count)
 
         return (matching_count, trends)
