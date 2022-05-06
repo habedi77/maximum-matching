@@ -3,7 +3,7 @@ from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
 # For testing
-DISABLE_TRENDS = False
+DISABLE_TRENDS = True
 
 class MaxFlow(AlgorithmBase):
     """
