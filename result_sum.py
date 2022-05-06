@@ -21,7 +21,6 @@ summary = {
     'generator': [],
     'mean': [],
     'std': [],
-    'density': [],
     # 'Vazirani': [],
     'Min Deg': [],
     # 'Oblivious': [],
@@ -53,7 +52,6 @@ for idx, t in tests.iterrows():
     summary['generator'].append(type(t['generator']).__name__)
     summary['mean'].append(t['mean'])
     summary['std'].append(t['std'])
-    summary['density'].append(t['density'])
 
     # summary['Vazirani'].append(df['Vaz_matching_avg_std'][0])
     summary['Min Deg'].append(df['MinDeg_matching_avg_std'][0])

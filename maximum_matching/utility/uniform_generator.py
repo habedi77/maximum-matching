@@ -7,9 +7,8 @@ class UniformGenerator(GeneratorBase):
 
     def _generate(self, size_left: int, size_right: int, graph_class: Type[G], seed: int, mean: float) -> G:
         """
-        Connects a given percentage of edges between the two sets of a bipartite graph
-        Density=0 : empty graph, Density=1 : complete bipartite graph
-        Number of edges will not exceed density*size_left*size_right
+        Connect the two sets of bipartite graphs with the **left set** having an expected degree value of 'mean'
+        Number of edges will not exceed mean*size_left
 
         :param size_left: size of the left bipartite set
         :param size_right: size of the right bipartite set
@@ -46,7 +45,7 @@ class UniformGenerator(GeneratorBase):
         :param graph_class: type of graph class with base of BaseBipartiteGraph
         :param seed: seed for generator
         :param kwargs: used for additional arguments
-        :key density: percentage of edges to create
+        :key mean: expected degree of the lef vertices
         :return: the same BaseBipartiteGraph instance provided
         """
 
