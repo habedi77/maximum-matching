@@ -5,7 +5,6 @@ from typing import Tuple, Union, List
 
 import numpy as np
 
-from ..utility.Flags import *
 from .algorithm_base import AlgorithmBase
 from ..graphs.graph_base import BipartiteSet
 
@@ -30,10 +29,6 @@ class MinDeg(AlgorithmBase):
         # print("running Minimum Degree Algorithm ... ")
 
         right = graph.get_independent_set(BipartiteSet.right)
-
-        # Randomize the order of right vertices
-        if Online_Randomize:
-            shuffle(right)
 
         # Array of edges in our matching
         max_matching = np.full((graph.size, 2), fill_value=-1)
