@@ -19,10 +19,11 @@ PRINT_OUTPUT = False
 _algorithms = [
     # Vaz(),  # Vazirani (Online)
     # Rand(),
-    # MinDeg(),
+    MinDeg(),
     # Oblivious(),
-    FeldmanTSM(),
-    # MaxFlow()
+    # MaxFlow(),
+    # FeldmanTSM(),
+
 ]
 
 
