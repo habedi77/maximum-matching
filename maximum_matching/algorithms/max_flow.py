@@ -143,8 +143,8 @@ class MaxFlow(AlgorithmBase):
             neighbours = graph.list(v)
             vec[neighbours, v] = 1
             vec[v, neighbours] = 1
-            capacity[v, neighbours] = sourceSinkCap
-            capacity[neighbours, v] = sourceSinkCap
+            capacity[v, neighbours] = 1
+            capacity[neighbours, v] = 1
 
         max_matches = MaxFlow.run_max_flow(source_node, sink_node, total_nodes, vec, capacity)
 
