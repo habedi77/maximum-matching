@@ -26,13 +26,13 @@ summary = {
     'Oblivious': [],
     'Random': [],
     # 'Feldman TSM': [],
-    # 'Max Flow': [],
+    'Max Flow': [],
     'std Vazirani': [],
     'std Min Deg': [],
     'std Oblivious': [],
     'std Random': [],
     # 'std Feldman TSM': [],
-    # 'std Max Flow': [],
+    'std Max Flow': [],
 
     # MaxFlow_matching_avg_std
     # MinDeg_matching_avg_std
@@ -58,14 +58,14 @@ for idx, t in tests.iterrows():
     summary['Oblivious'].append(df['Oblivious_matching_avg_std'][0])
     summary['Random'].append(df['Rand_matching_avg_std'][0])
     # summary['Feldman TSM'].append(df['FeldmanTSM_matching_avg_std'][0])
-    # summary['Max Flow'].append(df['MaxFlow_matching_avg_std'][0])
+    summary['Max Flow'].append(df['MaxFlow_matching_avg_std'][0])
 
     summary['std Vazirani'].append(df['Vaz_matching_avg_std'][1])
     summary['std Min Deg'].append(df['MinDeg_matching_avg_std'][1])
     summary['std Oblivious'].append(df['Oblivious_matching_avg_std'][1])
     summary['std Random'].append(df['Rand_matching_avg_std'][1])
     # summary['std Feldman TSM'].append(df['FeldmanTSM_matching_avg_std'][1])
-    # summary['std Max Flow'].append(df['MaxFlow_matching_avg_std'][1])
+    summary['std Max Flow'].append(df['MaxFlow_matching_avg_std'][1])
 
 d = pd.DataFrame.from_dict(summary)
 d.to_csv('final_summary.csv')

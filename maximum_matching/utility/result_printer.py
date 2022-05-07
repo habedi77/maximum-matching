@@ -1,5 +1,5 @@
 from typing import List, Dict
-
+import os
 import pandas as pd
 
 """
@@ -87,5 +87,9 @@ def write_agg_results_v2(result: List[Dict], fname):
             result_dict[key] = list(result_dict[key]) + [None] * (max_len - len(result_dict[key]))
 
     df = pd.DataFrame.from_records(result_dict)
-    df.to_csv(f"{fname}.csv")
+
+    if not os.path.exists('results'):
+        os.makedirs('results')
+
+    df.to_csv(f"results/{fname}.csv")
     pass

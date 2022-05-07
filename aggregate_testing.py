@@ -103,9 +103,6 @@ if __name__ == "__main__":
             _r = {
                 "id": idx,
                 "name": type(a).__name__,
-                # "repeats": t["repeats"],
-                # "size_left": t["size_left"],
-                # "size_right": t["size_right"],
                 "avg_matching_size": df_alg['matching_size'].mean(),
                 "std_matching_size": df_alg['matching_size'].std(),
                 "avg_trend": trend_stack.mean(axis=0),
@@ -113,4 +110,4 @@ if __name__ == "__main__":
             }
             _agg_result.append(_r)
             final_agg_result.append(_r)
-            write_agg_results_v2(_agg_result, f"results/agg_mx_res_{idx}")
+            write_agg_results_v2(_agg_result, f"agg_mx_res_{idx}")

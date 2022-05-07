@@ -17,12 +17,12 @@ PRINT_OUTPUT = False
 
 # List the algorithms you would like the program to run
 _algorithms = [
-    # Vaz(),  # Vazirani (Online)
-    # Rand(),
+    Vaz(),  # Vazirani (Online)
+    Rand(),
     MinDeg(),
     # Oblivious(),
-    # MaxFlow(),
-    # FeldmanTSM(),
+    MaxFlow(),
+    FeldmanTSM(),
 
 ]
 
@@ -93,4 +93,4 @@ if __name__ == "__main__":
             }
             _agg_result.append(_r)
             final_agg_result.append(_r)
-            write_agg_results_v2(_agg_result, f"results/agg_single_res_{idx}")
+            write_agg_results_v2(_agg_result, f"agg_single_res_{idx}")
