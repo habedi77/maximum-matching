@@ -22,7 +22,7 @@ _algorithms = [
     MinDeg(),
     Oblivious(),
     # FeldmanTSM(),
-    # MaxFlow()
+    MaxFlow()
 ]
 
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
                 args.append((idx, a, ga, gh))
 
     print(f"Prepared {len(args)} tests")
-    pool = Pool(10)
+    pool = Pool()
     try:
         p_iter = pool.imap_unordered(process_image, args)
         # Progress bar
@@ -97,13 +97,10 @@ if __name__ == "__main__":
             _r = {
                 "id": idx,
                 "name": type(a).__name__,
-                # "repeats": t["repeats"],
-                # "size_left": t["size_left"],
-                # "size_right": t["size_right"],
                 "avg_matching_size": df_alg['matching_size'].mean(),
                 "std_matching_size": df_alg['matching_size'].std(),
                 "avg_trend": trend_stack.mean(axis=0),
                 "std_trend": trend_stack.std(axis=0),
             }
             _agg_result.append(_r)
-            write_agg_results_v2(_agg_result, f"results/agg_mp_res_{idx}")
+            write_agg_results_v2(_agg_result, f"agg_mp_res_{idx}")
