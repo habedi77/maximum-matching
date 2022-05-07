@@ -68,4 +68,4 @@ for idx, t in tests.iterrows():
     summary['std Max Flow'].append(df['MaxFlow_matching_avg_std'][1])
 
 d = pd.DataFrame.from_dict(summary)
-d.to_csv('final_summary.csv')
+d.to_csv('results/final_summary.csv')
