@@ -1,6 +1,8 @@
 from typing import List, Tuple, Union
 
 import numpy as np
+from numpy import ndarray
+
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.algorithms.max_flow import MaxFlow
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
@@ -27,10 +29,10 @@ class FeldmanTSM(AlgorithmBase):
         Otherwise, ignore.
     """
 
-    def runMaxFlow(self, historicGraph: GraphBase) -> List:
+    def run_max_flow(self, historicGraph: GraphBase) -> List:
 
         maxFlow = MaxFlow()
-        maxFlow.find_max_bipartite(historicGraph, True, sourceSinkCap=2)
+        _, _, capacity = maxFlow.find_max_bipartite_with_cap(historicGraph, sourceSinkCap=2)
 
         vec = [None] * historicGraph.size
 
@@ -38,7 +40,7 @@ class FeldmanTSM(AlgorithmBase):
         for u in historicGraph.get_independent_set(BipartiteSet.left):
             for v in historicGraph.list(u):
 
-                if maxFlow.capacity[u][v] == 0: # capacity zero means flow is 1
+                if capacity[u][v] == 0:  # capacity zero means flow is 1
                     if vec[u] is None:
                         vec[u] = []
 
@@ -48,15 +50,15 @@ class FeldmanTSM(AlgorithmBase):
                     vec[u].append(v)
                     vec[v].append(u)
 
-                elif maxFlow.capacity[u][v] > 1:
-                    raise ValueError('Capacity should not be more than 1!')
+                # elif capacity[u][v] > 1:
+                #     raise ValueError('Capacity should not be more than 1!')
 
         return vec
 
-    def runRedBlue(self, right_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
+    def run_red_blue(self, right_size: int, vec: List, total_size: int) -> Tuple[List[int], List[int]]:
         red = [-1] * total_size
         blue = [-1] * total_size
-        pred = [-1] * total_size 
+        pred = [-1] * total_size
 
         for i in range(total_size):
             if vec[i] is None:
@@ -76,12 +78,12 @@ class FeldmanTSM(AlgorithmBase):
                         next = vec[cur][1]
                     else:
                         next = vec[cur][0]
-                    
+
                     pred[next] = cur
                     cur = next
                     cur_len += 1
-                
-                if cur == i: #cycle
+
+                if cur == i:  # cycle
                     st = i
                     blue[st] = pred[st]
                     red[pred[pred[st]]] = pred[st]
@@ -92,14 +94,14 @@ class FeldmanTSM(AlgorithmBase):
                         red[pred[pred[st]]] = pred[st]
                         st = pred[pred[st]]
                 else:
-                    #go down the other branch
+                    # go down the other branch
                     if len(vec[i]) == 2:
                         prev = i
                         ncur = vec[i][1]
                         pred[prev] = ncur
                         cur_len += 1
 
-                        while (len(vec[ncur]) == 2):
+                        while len(vec[ncur]) == 2:
                             next = -1
                             if vec[ncur][0] == prev:
                                 next = vec[ncur][1]
@@ -109,12 +111,12 @@ class FeldmanTSM(AlgorithmBase):
                             prev = ncur
                             ncur = next
                             cur_len += 1
-                        
+
                         pred[ncur] = ncur
                     else:
                         pred[i] = i
 
-                    if cur_len % 2 == 0: #number of nodes on the path is even, i.e. length is odd
+                    if cur_len % 2 == 0:  # number of nodes on the path is even, i.e. length is odd
                         if cur >= total_size:
                             blue[pred[cur]] = cur
                             st = pred[cur]
@@ -122,11 +124,11 @@ class FeldmanTSM(AlgorithmBase):
                                 red[st] = pred[st]
                                 blue[pred[pred[st]]] = pred[st]
                                 st = pred[pred[st]]
-                        
+
                         else:
                             blue[cur] = pred[cur]
                             st = pred[cur]
-                            while (pred[st] != st):
+                            while pred[st] != st:
                                 red[pred[st]] = st
                                 blue[pred[st]] = pred[pred[st]]
                                 st = pred[pred[st]]
@@ -147,15 +149,15 @@ class FeldmanTSM(AlgorithmBase):
                             blue[st] = pred[st]
                             blue[pred[pred[st]]] = pred[st]
                             st = pred[pred[st]]
-                            while (pred[st] != st):
+                            while pred[st] != st:
                                 red[st] = pred[st]
                                 blue[pred[pred[st]]] = pred[st]
                                 st = pred[pred[st]]
 
-        return (red, blue)
+        return red, blue
 
-    def get_type(self, size: int, right_size: int) -> List[int]:
-        rand = np.random.randint(low=size-right_size, high=size, size=right_size)
+    def get_type(self, size: int, right_size: int) -> Union[int, ndarray]:
+        rand = np.random.randint(low=size - right_size, high=size, size=right_size)
         result = [size + size] * size
 
         idx = size - right_size
@@ -165,10 +167,14 @@ class FeldmanTSM(AlgorithmBase):
 
         return result
 
-    def run(self, graph: GraphBase, historicGraph: GraphBase) -> Tuple[int, Union[List, None]]:
-        vec = self.runMaxFlow(historicGraph=historicGraph)
-        (red, blue) = self.runRedBlue(historicGraph.size_right, vec, historicGraph.size)
-        types = self.get_type(historicGraph.size, historicGraph.size_right)
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
+        assert "historic_graph" in kwargs
+        historic_graph = kwargs["historic_graph"]
+        assert isinstance(historic_graph, GraphBase)
+
+        vec = self.run_max_flow(historicGraph=historic_graph)
+        (red, blue) = self.run_red_blue(historic_graph.size_right, vec, historic_graph.size)
+        types = self.get_type(historic_graph.size, historic_graph.size_right)
 
         matching_count = 0
         trends = []
@@ -177,8 +183,8 @@ class FeldmanTSM(AlgorithmBase):
         visited_nodes += graph.size_left
         trends.append([visited_nodes, matching_count])
 
-        result = [-1] * historicGraph.size
-        count = [0] * historicGraph.size
+        result = [-1] * historic_graph.size
+        count = [0] * historic_graph.size
 
         visited = set()
         for tempI in graph.b_get_independent_set(BipartiteSet.right):
@@ -186,27 +192,27 @@ class FeldmanTSM(AlgorithmBase):
 
             neighbours = list((set(graph.b_list(tempI, False))) - visited)
 
-            if (len(neighbours) > 0):
+            if len(neighbours) > 0:
                 random_id = np.random.randint(0, len(neighbours))
                 random_neighbour = neighbours[random_id]
                 visited.add(random_neighbour)
 
-                i = tempI + historicGraph.size_left
-                
+                i = tempI + historic_graph.size_left
+
                 count[types[i]] += 1
                 if count[types[i]] == 1 and blue[types[i]] != -1:
-                    if (result[i] == -1):
+                    if result[i] == -1:
                         matching_count += 1
 
                     result[i] = 0
                 elif count[types[i]] == 2 and red[types[i]] != -1:
-                    if (result[i] == -1):
+                    if result[i] == -1:
                         matching_count += 1
 
                     result[i] = 0
         
             trends.append([visited_nodes, matching_count])
-            
+
         # print("matching_count: ", matching_count)
 
-        return (matching_count, trends)
+        return matching_count, trends

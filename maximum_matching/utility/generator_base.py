@@ -29,3 +29,10 @@ class GeneratorBase(ABC):
         :return: the same BaseBipartiteGraph instance provided
         """
         pass
+
+    @staticmethod
+    def get_kwargs_val(key: str, kwargs):
+        assert key in kwargs
+        value = kwargs[key]
+        assert type(value) == float or type(value) == int
+        return value

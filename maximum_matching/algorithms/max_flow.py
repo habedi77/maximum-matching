@@ -1,9 +1,11 @@
 from typing import List, Tuple, Union
+
+import numpy as np
+from numpy import ndarray
+
 from maximum_matching.algorithms.algorithm_base import AlgorithmBase
 from maximum_matching.graphs.graph_base import BipartiteSet, GraphBase
 
-# For testing
-DISABLE_TRENDS = False
 
 class MaxFlow(AlgorithmBase):
     """
@@ -12,141 +14,145 @@ class MaxFlow(AlgorithmBase):
 
     INF = 1000000009
 
-    vec = [] # graph on which the max flow will run
-    visited = []
-    capacity = [] # 2D array for capacity
+    def __init__(self) -> None:
+        super().__init__()
+        # self.vec = np.empty(1)  # graph on which the max flow will run
+        # self.visited = np.empty(1)
+        # self.capacity = np.empty(1)  # 2D array for capacity
+        # self.bfs_path = np.empty(1)
 
-    bfs_path = []
+    @staticmethod
+    def bfs(start: int, endd: int, n: int, vec, capacity) -> Tuple[bool, np.ndarray]:
+        bfs_path = np.full(shape=n, fill_value=-1)
+        visited = np.full(shape=n, fill_value=False, dtype=bool)
+        visited[start] = True
 
-
-    def BFS(self, start: int, endd: int, n: int) -> bool:
-        self.bfs_path = [-1] * n
-        que = []
-        que.append(start)
-        self.visited[start] = True
-
+        que = [start]
         found = False
-        while (len(que) > 0 and found == False):
-            u = que[0]
 
-            if found == False and self.vec[u] is not None:
-                for v in self.vec[u]:
-                    if self.visited[v] == False and self.capacity[u][v] > 0:
-                        que.append(v)
-                        self.visited[v] = True
-                        self.bfs_path[v] = u
+        while len(que) > 0 and not found:
+            u = que.pop(0)
 
-                        if v == endd:
-                            found = True
+            if found:
+                break
 
-                    if found == True:
-                        break
+            vec_u = np.where(vec[u] > -1)[0]
+            vec_u_2 = vec_u[np.logical_and(np.logical_not(visited[vec_u]), capacity[u][vec_u] > 0)]
 
-            que.pop(0)
+            visited[vec_u_2] = True
+            bfs_path[vec_u_2] = u
+            que += list(vec_u_2)
 
-        return found
+            if endd in vec_u_2:
+                found = True
+                break
 
+        return found, bfs_path
 
-    def run_max_flow(self, src: int, sink: int, n: int) -> int:
+    @staticmethod
+    def run_max_flow(src: int, sink: int, n: int, vec, capacity) -> int:
         max_flow = 0
-        min_capacity = self.INF
-        self.visited = [False] * n
+        min_capacity = MaxFlow.INF
 
-        while self.BFS(src, sink, n) is True:
+        bfs_res, bfs_path = MaxFlow.bfs(src, sink, n, vec, capacity)
+        while bfs_res is True:
 
             x = sink
             while x != src:
-                min_capacity = min(min_capacity, self.capacity[self.bfs_path[x]][x])
-                x = self.bfs_path[x]
+                min_capacity = min(min_capacity, capacity[bfs_path[x]][x])
+                x = bfs_path[x]
 
             x = sink
-            while x != src and min_capacity != self.INF:
-                self.capacity[self.bfs_path[x]][x] -= min_capacity
-                self.capacity[x][self.bfs_path[x]] += min_capacity
-                x = self.bfs_path[x]
+            while x != src and min_capacity != MaxFlow.INF:
+                capacity[bfs_path[x]][x] -= min_capacity
+                capacity[x][bfs_path[x]] += min_capacity
+                x = bfs_path[x]
 
             max_flow += min_capacity
-            min_capacity = self.INF
-
-            self.visited = [False] * n
+            min_capacity = MaxFlow.INF
+            bfs_res, bfs_path = MaxFlow.bfs(src, sink, n, vec, capacity)
 
         return max_flow
 
-    def make_edge(self, u: int, v: int, cap: int):
-        self.capacity[u][v] = cap
-
-        if self.vec[u] is None:
-            self.vec[u] = []
-
-        if self.vec[v] is None:
-            self.vec[v] = []
-
-        self.vec[u].append(v)
-        self.vec[v].append(u)
-
-
-    def find_max_bipartite(self, graph: GraphBase, disable_trends: bool, sourceSinkCap: int = 1) -> List:
+    @staticmethod
+    def find_max_bipartite(graph: GraphBase, sourceSinkCap: int = 1) -> \
+            Tuple[int, Union[List, None]]:
 
         left_side = graph.get_independent_set(BipartiteSet.left)
         right_side = graph.get_independent_set(BipartiteSet.right)
 
-        total_nodes = graph.size + 1
-        source_node = total_nodes
-        total_nodes += 1
-        sink_node = total_nodes
-        total_nodes += 1
+        source_node = graph.size
+        sink_node = graph.size + 1
+        total_nodes = graph.size + 2
 
-        trends = []
-        visited_nodes = graph.size_left
+        vec = np.full(shape=(total_nodes, total_nodes), fill_value=-1, dtype=int)
+        capacity = np.zeros((total_nodes, total_nodes))
 
-        trends.append([visited_nodes, 0])
-        max_matches = 0
+        # connecting source_node with left side
+        vec[source_node, left_side] = 1
+        vec[left_side, source_node] = 1
+        capacity[left_side, source_node] = sourceSinkCap
+        capacity[source_node, left_side] = sourceSinkCap
 
-        for right_idx in range(0, graph.size_right):
+        # connecting right_side with sink_node
+        vec[sink_node, right_side] = 1
+        vec[right_side, sink_node] = 1
+        capacity[right_side, sink_node] = sourceSinkCap
+        capacity[sink_node, right_side] = sourceSinkCap
 
-            # generating for large input
-            if disable_trends: 
-                right_idx = graph.size_right - 1
+        for v in right_side:
+            neighbours = graph.list(v)
+            vec[neighbours, v] = 1
+            vec[v, neighbours] = 1
+            capacity[v, neighbours] = 1
+            capacity[neighbours, v] = 1
 
-            self.vec = [None] * total_nodes
-            self.capacity = [ [0]*total_nodes for i in range(total_nodes)] 
+        max_matches = MaxFlow.run_max_flow(source_node, sink_node, total_nodes, vec, capacity)
 
-            # connecting source_node with left side
-            for x in left_side:
-                u = source_node
-                v = x
-                self.make_edge(u, v, sourceSinkCap)
-
-            # connecting right_side with sink_node
-            for x in right_side:
-                u = x
-                v = sink_node
-                self.make_edge(u, v, sourceSinkCap)
-
-            for i in range(right_idx + 1):
-                v = right_side[i]
-                neighbours = graph.list(v)
-                for u in neighbours:
-                    self.make_edge(u, v, 1)
-
-            count_matches = self.run_max_flow(source_node, sink_node, total_nodes)
-
-            visited_nodes += 1
-
-            max_matches = max(max_matches, count_matches)
-
-            trends.append([visited_nodes, count_matches])
-
-            if disable_trends:
-                break
+        trends = [[graph.size, max_matches]] * (graph.size_right + 1)
 
         return max_matches, trends
 
+    @staticmethod
+    def find_max_bipartite_with_cap(graph: GraphBase, sourceSinkCap: int = 1) -> \
+            Tuple[int, List, ndarray]:
 
-    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
+        left_side = graph.get_independent_set(BipartiteSet.left)
+        right_side = graph.get_independent_set(BipartiteSet.right)
 
-        print("Running max flow...")
+        source_node = graph.size
+        sink_node = graph.size + 1
+        total_nodes = graph.size + 2
 
-        max_matches, trends = self.find_max_bipartite(graph, DISABLE_TRENDS)
+        vec = np.full(shape=(total_nodes, total_nodes), fill_value=-1, dtype=int)
+        capacity = np.zeros((total_nodes, total_nodes))
 
-        return (max_matches, trends)
+        # connecting source_node with left side
+        vec[source_node, left_side] = 1
+        vec[left_side, source_node] = 1
+        capacity[left_side, source_node] = sourceSinkCap
+        capacity[source_node, left_side] = sourceSinkCap
+
+        # connecting right_side with sink_node
+        vec[sink_node, right_side] = 1
+        vec[right_side, sink_node] = 1
+        capacity[right_side, sink_node] = sourceSinkCap
+        capacity[sink_node, right_side] = sourceSinkCap
+
+        for v in right_side:
+            neighbours = graph.list(v)
+            vec[neighbours, v] = 1
+            vec[v, neighbours] = 1
+            capacity[v, neighbours] = 1
+            capacity[neighbours, v] = 1
+
+        max_matches = MaxFlow.run_max_flow(source_node, sink_node, total_nodes, vec, capacity)
+
+        trends = [[graph.size, max_matches]] * (graph.size_right + 1)
+
+        return max_matches, trends, capacity
+
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
+        max_matches, trends = self.find_max_bipartite(graph)
+
+        return max_matches, trends

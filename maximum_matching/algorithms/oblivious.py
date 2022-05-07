@@ -17,7 +17,7 @@ class Oblivious(AlgorithmBase):
     so an attempted match to an already matched known_nodes means that unknown_node j is dropped.
     """
     
-    def run(self, graph: GraphBase) -> Tuple[int, Union[List, None]]:
+    def run(self, graph: GraphBase, **kwargs) -> Tuple[int, Union[List, None]]:
         """
         Run Oblivious algorithm
 
@@ -27,7 +27,7 @@ class Oblivious(AlgorithmBase):
 
         np.random.seed(0)
         
-        print("Started running Oblivious")
+        # print("Started running Oblivious")
 
         known_nodes = graph.b_get_independent_set(BipartiteSet.left)
         unknown_nodes = graph.b_get_independent_set(BipartiteSet.right)
@@ -58,5 +58,5 @@ class Oblivious(AlgorithmBase):
 
             trends.append([visited_vertices, count_matches])
         
-        print("Finished running Oblivious")
+        # print("Finished running Oblivious")
         return count_matches, trends
