@@ -27,6 +27,15 @@ class FeldmanTSM(AlgorithmBase):
         If t` arrives for the first time, and if it has blue edges then set the edge to a` as blue.
         If t` arrives for the second time, and if it has red edges then set the edge to a` as red.
         Otherwise, ignore.
+
+        Reference: 
+        1. Denis Pankratov, Allan Borodin, and Christodoulos Karavasilis. [n.d.]. 
+        Online Bipartite Matching Library.
+        Retrieved May 6, 2022 from https://users.encs.concordia.ca/∼denisp/online-bm-lib.tar.gz
+
+        2. Allan Borodin, Christodoulos Karavasilis, and Denis Pankratov. 2020. 
+        An experimental study of algorithms for online bipartite matching. 
+        Journal of Experimental Algorithmics (JEA) 25 (2020), 1–37
     """
 
     def run_max_flow(self, historicGraph: GraphBase) -> List:
